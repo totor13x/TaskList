@@ -2027,7 +2027,6 @@ module.exports = {
     updateTasks: function updateTasks(data, typeView) {
       if (typeView === undefined) typeView = 'isAll';
       var self = this;
-      console.log(data);
 
       if (data.token !== undefined) {
         localStorage.setItem('token', data.token);

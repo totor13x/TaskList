@@ -11,7 +11,8 @@ class FileController extends Controller
 {
     public function show(Request $request)
     {
-        
+        $filenew = new File; 
+        return response()->json($filenew->all());
     }
     public function create(Request $request)
     {

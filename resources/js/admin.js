@@ -32,8 +32,8 @@ const router = new VueRouter({
     },
     */
     {
-      path: '/admin/upload',
-      name: 'admin.upload',
+      path: '/admin/file/upload',
+      name: 'admin.file.upload',
       component: Upload
     },
   ],

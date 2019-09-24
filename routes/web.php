@@ -29,8 +29,10 @@ Route::group(['prefix' => 'admin'], function () {
     Route::get('login', 'AdminController@login');
     Route::post('login/validate', 'Auth\LoginController@login')->name('admin.login.validate');
     Route::post('logout', 'Auth\LoginController@logout')->name('logout');
-    Route::get('upload', 'AdminController@index');
-    Route::post('upload', 'Admin\FileController@create');
+    Route::get('file/upload', 'AdminController@index');
+    Route::post('file/upload', 'Admin\FileController@create');
+    Route::get('file/show', 'Admin\FileController@show');
+    
     Route::get('/', 'AdminController@index');
 });
 

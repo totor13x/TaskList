@@ -138,7 +138,6 @@
                     typeView = 'isAll'
                     
                 var self = this
-                console.log(data)
                 if (data.token !== undefined)
                 {
                     localStorage.setItem('token', data.token)

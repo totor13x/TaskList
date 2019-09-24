@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="columns">
-            <div class="column is-4">
+            <div class="column is-3">
                 <b-menu>
                     <b-menu-list label="Menu">
                         <b-menu-item 
@@ -21,7 +21,7 @@
                             icon="information-outline" 
                             tag="router-link"
                             label="Home11"
-                            to="/admin/upload"></b-menu-item>
+                            to="/admin/file/upload"></b-menu-item>
                     </b-menu-list>
                 </b-menu>
             </div>

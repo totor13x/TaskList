@@ -1935,15 +1935,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       file: undefined,
-      DataInfo: "ZZZ"
+      DataInfo: "ZZZ",
+      files: undefined
     };
   },
   methods: {
     sendDropFile: function sendDropFile() {
+      var self = this;
       var config = {
         headers: {
           'content-type': 'multipart/form-data'
@@ -1951,17 +1961,24 @@ __webpack_require__.r(__webpack_exports__);
       };
       var formData = new FormData();
       formData.append('file', this.file);
-      axios.post('/admin/upload', formData, config).then(function (response) {
+      axios.post('/admin/file/upload', formData, config).then(function (response) {
         console.log(response);
+        self.getUploadedFiles();
       })["catch"](function (error) {
         console.log(error);
       });
     },
     getUploadedFiles: function getUploadedFiles() {
+      var _this = this;
+
       axios.get('/admin/file/show').then(function (response) {
+        _this.files = response.data;
         console.log(response);
       });
     }
+  },
+  mounted: function mounted() {
+    this.getUploadedFiles();
   }
 });
 
@@ -32453,7 +32470,7 @@ var render = function() {
     _c("div", { staticClass: "columns" }, [
       _c(
         "div",
-        { staticClass: "column is-4" },
+        { staticClass: "column is-3" },
         [
           _c(
             "b-menu",
@@ -32476,7 +32493,7 @@ var render = function() {
                       icon: "information-outline",
                       tag: "router-link",
                       label: "Home11",
-                      to: "/admin/upload"
+                      to: "/admin/file/upload"
                     }
                   })
                 ],
@@ -32612,14 +32629,48 @@ var render = function() {
                 ],
                 1
               )
-            : _vm._e()
+            : _vm._e(),
+          _vm._v(" "),
+          _c(
+            "b-field",
+            [
+              _c(
+                "b-button",
+                {
+                  staticClass: "is-fullwidth",
+                  on: { click: _vm.getUploadedFiles }
+                },
+                [_vm._v("Загрузить")]
+              )
+            ],
+            1
+          )
         ],
         1
       ),
       _vm._v(" "),
       _c("div", { staticClass: "column" }, [
         _c("div", { staticClass: "columns" }, [
-          _c("div", { staticClass: "column" }),
+          _c("div", { staticClass: "column" }, [
+            _vm.files
+              ? _c(
+                  "div",
+                  _vm._l(_vm.files, function(file) {
+                    return _c(
+                      "b-field",
+                      { key: file.id },
+                      [
+                        _c("b-button", { staticClass: "is-fullwidth" }, [
+                          _vm._v(_vm._s(file.name))
+                        ])
+                      ],
+                      1
+                    )
+                  }),
+                  1
+                )
+              : _vm._e()
+          ]),
           _vm._v(" "),
           _c("div", { staticClass: "column" }, [
             _c("div", { staticClass: "box" }, [
@@ -47729,8 +47780,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   },
   */
   {
-    path: '/admin/upload',
-    name: 'admin.upload',
+    path: '/admin/file/upload',
+    name: 'admin.file.upload',
     component: _views_admin_Upload__WEBPACK_IMPORTED_MODULE_5__["default"]
   }]
 });
