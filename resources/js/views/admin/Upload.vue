@@ -24,6 +24,20 @@
                 </b-field>
             </div>
             <div class="column">
+                <div class="columns">
+                    <div class="column">
+                    </div>
+                    <div class="column">
+                        <div class="box">
+                            <div v-if="file">
+                                12313
+                            </div>
+                            <div v-else>
+                            {{DataInfo}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -34,7 +48,8 @@
         
         data() {
             return {
-                file: undefined
+                file: undefined,
+                DataInfo: "ZZZ",
             }
         },
         methods: {
@@ -55,6 +70,13 @@
                     console.log(error)
                 });
             },
+            getUploadedFiles()
+            {
+                axios.get('/admin/file/show')
+                .then(response => {
+                    console.log(response)
+                })
+            }
         }
     }
 </script>

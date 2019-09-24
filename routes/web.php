@@ -30,7 +30,7 @@ Route::group(['prefix' => 'admin'], function () {
     Route::post('login/validate', 'Auth\LoginController@login')->name('admin.login.validate');
     Route::post('logout', 'Auth\LoginController@logout')->name('logout');
     Route::get('upload', 'AdminController@index');
-    Route::post('upload', 'AdminController@upload');
+    Route::post('upload', 'Admin\FileController@create');
     Route::get('/', 'AdminController@index');
 });
 

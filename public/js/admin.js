@@ -1921,10 +1921,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      file: undefined
+      file: undefined,
+      DataInfo: "ZZZ"
     };
   },
   methods: {
@@ -1940,6 +1955,11 @@ __webpack_require__.r(__webpack_exports__);
         console.log(response);
       })["catch"](function (error) {
         console.log(error);
+      });
+    },
+    getUploadedFiles: function getUploadedFiles() {
+      axios.get('/admin/file/show').then(function (response) {
+        console.log(response);
       });
     }
   }
@@ -32597,7 +32617,29 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "column" })
+      _c("div", { staticClass: "column" }, [
+        _c("div", { staticClass: "columns" }, [
+          _c("div", { staticClass: "column" }),
+          _vm._v(" "),
+          _c("div", { staticClass: "column" }, [
+            _c("div", { staticClass: "box" }, [
+              _vm.file
+                ? _c("div", [
+                    _vm._v(
+                      "\n                            12313\n                        "
+                    )
+                  ])
+                : _c("div", [
+                    _vm._v(
+                      "\n                        " +
+                        _vm._s(_vm.DataInfo) +
+                        "\n                        "
+                    )
+                  ])
+            ])
+          ])
+        ])
+      ])
     ])
   ])
 }
