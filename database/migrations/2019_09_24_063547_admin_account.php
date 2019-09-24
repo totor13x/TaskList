@@ -4,11 +4,10 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-use App\Http\Controllers\Controller;
-use App\Admin;
+use App\User;
 use Illuminate\Support\Facades\Hash;
 
-class AdminsUser extends Migration
+class AdminAccount extends Migration
 {
     /**
      * Run the migrations.
@@ -17,7 +16,8 @@ class AdminsUser extends Migration
      */
     public function up()
     {
-        Admin::create([
+        User::create([
+            'name' => 'admin',
             'email' => 'admin@task.local',
             'password' => Hash::make("1100"),
         ]);
@@ -30,6 +30,6 @@ class AdminsUser extends Migration
      */
     public function down()
     {
-        Admin::all()->each->delete();
+        User::all()->each->delete();
     }
 }

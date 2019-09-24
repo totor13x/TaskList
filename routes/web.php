@@ -25,5 +25,13 @@ Route::get('/task/show',
         'uses'=>'TaskController@show'
     ]
 );
-Route::get('/admin/upload', 'AdminController@index');
+Route::group(['prefix' => 'admin'], function () {
+    Route::get('login', 'AdminController@login');
+    Route::post('login/validate', 'Auth\LoginController@login')->name('admin.login.validate');
+    Route::post('logout', 'Auth\LoginController@logout')->name('logout');
+    Route::get('upload', 'AdminController@index');
+    Route::post('upload', 'AdminController@upload');
+    Route::get('/', 'AdminController@index');
+});
+
 Route::get('/{any}', 'TaskController@index')->where('any', '.*');
