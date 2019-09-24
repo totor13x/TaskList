@@ -1943,12 +1943,30 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+var ModalForm = {
+  props: ['name'],
+  template: "            \n                <div class=\"modal-card\" style=\"width: auto\">\n                    <header class=\"modal-card-head\">\n                        <p class=\"modal-card-title\">\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435: {{name}}</p>\n                    </header>\n                    <section class=\"modal-card-body\">\n                        <b-field label=\"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\">\n                            <b-input\n                                type=\"name\"\n                                :value=\"name\"\n                                placeholder=\"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0444\u0430\u0439\u043B\u0430\"\n                                required>\n                            </b-input>\n                        </b-field>\n\n                    </section>\n                    <footer class=\"modal-card-foot\">\n                        <button class=\"button is-danger\">\u0423\u0434\u0430\u043B\u0438\u0442\u044C</button>\n                        <button class=\"button is-primary\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button>\n                        <button class=\"button\" type=\"button\" @click=\"$parent.close()\">Close</button>\n                    </footer>\n                </div>\n            </form>\n        "
+};
 /* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    ModalForm: ModalForm
+  },
   data: function data() {
     return {
       file: undefined,
       DataInfo: "ZZZ",
-      files: undefined
+      files: undefined,
+      isComponentModalActive: false,
+      formProps: {
+        name: 'name'
+      }
     };
   },
   methods: {
@@ -1975,6 +1993,10 @@ __webpack_require__.r(__webpack_exports__);
         _this.files = response.data;
         console.log(response);
       });
+    },
+    modalFile: function modalFile(file) {
+      this.formProps.name = file.name;
+      this.isComponentModalActive = true;
     }
   },
   mounted: function mounted() {
@@ -32569,130 +32591,170 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("section", [
-    _c("div", { staticClass: "columns" }, [
+  return _c(
+    "section",
+    [
       _c(
-        "div",
-        { staticClass: "column is-4" },
-        [
-          _c(
-            "b-field",
-            [
-              _c(
-                "b-upload",
-                {
-                  attrs: { "drag-drop": "" },
-                  model: {
-                    value: _vm.file,
-                    callback: function($$v) {
-                      _vm.file = $$v
-                    },
-                    expression: "file"
-                  }
-                },
-                [
-                  _c("section", { staticClass: "section" }, [
-                    _c("div", { staticClass: "content has-text-centered" }, [
-                      _c(
-                        "p",
-                        [
-                          _c("b-icon", {
-                            attrs: { icon: "upload", size: "is-large" }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c("p", [
-                        _vm._v("Drop your files here or click to upload")
-                      ])
-                    ])
-                  ])
-                ]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _vm.file
-            ? _c(
-                "b-field",
-                [
-                  _c(
-                    "b-button",
-                    {
-                      staticClass: "is-fullwidth",
-                      on: { click: _vm.sendDropFile }
-                    },
-                    [_vm._v("Загрузить " + _vm._s(_vm.file.name))]
-                  )
-                ],
-                1
-              )
-            : _vm._e(),
-          _vm._v(" "),
-          _c(
-            "b-field",
-            [
-              _c(
-                "b-button",
-                {
-                  staticClass: "is-fullwidth",
-                  on: { click: _vm.getUploadedFiles }
-                },
-                [_vm._v("Загрузить")]
-              )
-            ],
-            1
-          )
-        ],
+        "b-modal",
+        {
+          attrs: { active: _vm.isComponentModalActive, "has-modal-card": "" },
+          on: {
+            "update:active": function($event) {
+              _vm.isComponentModalActive = $event
+            }
+          }
+        },
+        [_c("modal-form", _vm._b({}, "modal-form", _vm.formProps, false))],
         1
       ),
       _vm._v(" "),
-      _c("div", { staticClass: "column" }, [
-        _c("div", { staticClass: "columns" }, [
-          _c("div", { staticClass: "column" }, [
-            _vm.files
-              ? _c(
-                  "div",
-                  _vm._l(_vm.files, function(file) {
-                    return _c(
-                      "b-field",
-                      { key: file.id },
-                      [
-                        _c("b-button", { staticClass: "is-fullwidth" }, [
-                          _vm._v(_vm._s(file.name))
+      _c("div", { staticClass: "columns" }, [
+        _c(
+          "div",
+          { staticClass: "column is-4" },
+          [
+            _c(
+              "b-field",
+              [
+                _c(
+                  "b-upload",
+                  {
+                    attrs: { "drag-drop": "" },
+                    model: {
+                      value: _vm.file,
+                      callback: function($$v) {
+                        _vm.file = $$v
+                      },
+                      expression: "file"
+                    }
+                  },
+                  [
+                    _c("section", { staticClass: "section" }, [
+                      _c("div", { staticClass: "content has-text-centered" }, [
+                        _c(
+                          "p",
+                          [
+                            _c("b-icon", {
+                              attrs: { icon: "upload", size: "is-large" }
+                            })
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c("p", [
+                          _vm._v("Drop your files here or click to upload")
                         ])
-                      ],
-                      1
+                      ])
+                    ])
+                  ]
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _vm.file
+              ? _c(
+                  "b-field",
+                  [
+                    _c(
+                      "b-button",
+                      {
+                        staticClass: "is-fullwidth",
+                        on: { click: _vm.sendDropFile }
+                      },
+                      [_vm._v("Загрузить " + _vm._s(_vm.file.name))]
                     )
-                  }),
+                  ],
                   1
                 )
-              : _vm._e()
-          ]),
-          _vm._v(" "),
-          _c("div", { staticClass: "column" }, [
-            _c("div", { staticClass: "box" }, [
-              _vm.file
-                ? _c("div", [
-                    _vm._v(
-                      "\n                            12313\n                        "
-                    )
-                  ])
-                : _c("div", [
-                    _vm._v(
-                      "\n                        " +
-                        _vm._s(_vm.DataInfo) +
-                        "\n                        "
-                    )
-                  ])
+              : _vm._e(),
+            _vm._v(" "),
+            _c(
+              "b-field",
+              [
+                _c(
+                  "b-button",
+                  {
+                    staticClass: "is-fullwidth",
+                    on: { click: _vm.getUploadedFiles }
+                  },
+                  [_vm._v("Загрузить")]
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "button is-primary is-medium",
+                on: {
+                  click: function($event) {
+                    _vm.isComponentModalActive = true
+                  }
+                }
+              },
+              [_vm._v("\n                Launch component modal\n            ")]
+            )
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c("div", { staticClass: "column" }, [
+          _c("div", { staticClass: "columns" }, [
+            _c("div", { staticClass: "column" }, [
+              _vm.files
+                ? _c(
+                    "div",
+                    _vm._l(_vm.files, function(file) {
+                      return _c(
+                        "b-field",
+                        { key: file.id },
+                        [
+                          _c(
+                            "b-button",
+                            {
+                              staticClass: "is-fullwidth",
+                              on: {
+                                click: function($event) {
+                                  return _vm.modalFile(file)
+                                }
+                              }
+                            },
+                            [_vm._v(_vm._s(file.name))]
+                          )
+                        ],
+                        1
+                      )
+                    }),
+                    1
+                  )
+                : _vm._e()
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "column" }, [
+              _c("div", { staticClass: "box" }, [
+                _vm.file
+                  ? _c("div", [
+                      _vm._v(
+                        "\n                            12313\n                        "
+                      )
+                    ])
+                  : _c("div", [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(_vm.DataInfo) +
+                          "\n                        "
+                      )
+                    ])
+              ])
             ])
           ])
         ])
       ])
-    ])
-  ])
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
