@@ -138,23 +138,35 @@
                     typeView = 'isAll'
                     
                 var self = this
+                console.log(data)
+                if (data.token !== undefined)
+                {
+                    localStorage.setItem('token', data.token)
+                    window.axios.defaults.headers.common['Authorization'] = data.token;
+                    self.$root.token = data.token
+                    this.load()
+                    return 
+                }
                 self.tasksOriginal = data
                 self.typeView = typeView
                 this.updateRecordsSync()
                 self.events = []
                 var MaxDots = []
-                this.tasksOriginal.map(function(value, key) {
-                    var formattedDate = new Date(value.created_at)
-                    var formattedDateForMaxDots = formattedDate.toISOString().split('T')[0]
-                    if (MaxDots[formattedDateForMaxDots] === undefined)
-                        MaxDots[formattedDateForMaxDots] = 0
+                if (this.tasksOriginal.map !== undefined) 
+                {
+                    this.tasksOriginal.map(function(value, key) {
+                        var formattedDate = new Date(value.created_at)
+                        var formattedDateForMaxDots = formattedDate.toISOString().split('T')[0]
+                        if (MaxDots[formattedDateForMaxDots] === undefined)
+                            MaxDots[formattedDateForMaxDots] = 0
 
-                    if (MaxDots[formattedDateForMaxDots] < 3)
-                    {
-                        self.events.push(formattedDate);
-                        MaxDots[formattedDateForMaxDots]++;
-                    }
-                })
+                        if (MaxDots[formattedDateForMaxDots] < 3)
+                        {
+                            self.events.push(formattedDate);
+                            MaxDots[formattedDateForMaxDots]++;
+                        }
+                    })
+                }
             },
             changeDate(date)
             {

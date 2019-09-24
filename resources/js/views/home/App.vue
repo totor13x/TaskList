@@ -24,7 +24,7 @@
   </div>
 </template>
 <script>
-  module.exports = {
+  module.exports = { 
     beforeCreate: function() {
       var token = localStorage.getItem('token')
       if (token != undefined && token != null) 

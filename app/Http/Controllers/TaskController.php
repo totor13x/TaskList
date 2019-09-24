@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\User;
+use App\Token;
 use App\Task;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -17,10 +17,9 @@ class TaskController extends Controller
     {
       $this->middleware('token');
 
-      $user = User::where('token', $request->headers->get('authorization'))->get()->first();
-      //dd($request->headers->get('authorization'));
-      //->whereDate('created_at', Carbon::now()->format('Y-m-d'))
-      return $user->tasks()->orderBy('id', 'desc')->get()->toArray();
+      $token = Token::where('token', $request->headers->get('authorization'))->get()->first();
+
+      return $token->tasks()->orderBy('id', 'desc')->get()->toArray();
     }
 
     public function update(Request $request)
@@ -33,10 +32,10 @@ class TaskController extends Controller
         ]);
 
         $data = $request->all();
-        $user = User::where('token', $request->headers->get('authorization'))->get()->first();
+        $token = Token::where('token', $request->headers->get('authorization'))->get()->first();
         //$task = new $user->tasks;
         //dd($task::create($data));
-        $task = $user->tasks()->find($request->id);
+        $task = $token->tasks()->find($request->id);
         //dd($task);
         $task->fill($data);
         $task->save();
@@ -50,14 +49,14 @@ class TaskController extends Controller
                 'text' => 'required|max:255', 
             ]);
             $data = $request->only('text');
-            $user = User::where('token', $request->headers->get('authorization'))->get()->first();
+            $token = Token::where('token', $request->headers->get('authorization'))->get()->first();
             $task = new Task($data);
             //$task = new $user->tasks;
             //dd($task::create($data));
-            $user->tasks()->save($task);
+            $token->tasks()->save($task);
             //dd($user->tasks);
             //::create($user, $data);
-            return $user->tasks()->orderBy('id', 'desc')->get()->toArray();
+            return $token->tasks()->orderBy('id', 'desc')->get()->toArray();
         }
         catch(ValidationException $e)
         {

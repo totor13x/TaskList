@@ -11,8 +11,8 @@ class Task extends Model
         'status',
     ];
 
-    public function user()
+    public function token()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Token::class);
     }
 }

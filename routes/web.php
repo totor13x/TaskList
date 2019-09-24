@@ -16,8 +16,14 @@ Route::get('/', function () {
 });
 */
 
-Route::get('/auth', 'Auth\RegisterController@create');
+Route::get('/auth', 'Auth\TokenRegisterController@create');
 Route::post('/task/send', 'TaskController@create');
 Route::post('/task/update', 'TaskController@update');
-Route::get('/task/show', 'TaskController@show');
+Route::get('/task/show', 
+    [
+        'middleware' => ['token'],
+        'uses'=>'TaskController@show'
+    ]
+);
+Route::get('/admin/upload', 'AdminController@index');
 Route::get('/{any}', 'TaskController@index')->where('any', '.*');

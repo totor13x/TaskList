@@ -3,10 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Support\Facades\Auth;
 use App\Token;
 
-class CheckToken
+class CheckNoToken
 {
     /**
      * Handle an incoming request.
@@ -19,9 +18,9 @@ class CheckToken
     {
         if ($request->headers->get('authorization') !== null) 
         {
-            if (Token::where('token', $request->headers->get('authorization'))->count() == 0)
+            if (Token::where('token', $request->headers->get('authorization'))->count() != 0)
             {
-                return redirect('/auth');
+                return redirect('/');
             }
         }   
         return $next($request);

@@ -7,20 +7,28 @@ import 'buefy/dist/buefy.css'
 Vue.use(VueRouter)
 Vue.use(Buefy)
 
-import App from './views/home/App'
-import Home from './views/home/Home'
+import App from './views/admin/App'
+import Upload from './views/admin/Upload'
 
 const router = new VueRouter({
   mode: 'history',
   routes: [
+      /*
     {
-      path: '/',
+      path: '/admin',
       name: 'home',
       component: Home
     },
+    
     {
-      path: '/auth',
+      path: '/admin/u',
       name: 'auth',
+    },
+    */
+    {
+      path: '/admin/upload',
+      name: 'admin.upload',
+      component: Upload
     },
   ],
 });
@@ -29,14 +37,4 @@ const app = new Vue({
     el: '#app',
     components: { App },
     router,
-    data: function() {
-        return {
-            token: undefined,
-        }
-    }, 
-    watch: {
-        token: function() {
-            window.axios.defaults.headers.common['Authorization'] = this.token;
-        },
-    }
 });
