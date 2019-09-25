@@ -1,6 +1,6 @@
 <template>
   <div class="columns is-centered">
-  <div class="column is-half">
+  <div class="column is-8">
       <div class="notification is-primary">
         <div class="container">
           <h1 class="title">
@@ -26,20 +26,21 @@
           </h1>
         </div>
       </div>
-    <!--
+    
     <div class="columns">
+      <div class="column is-2">
+      </div>
       <div class="column">
-        -->
+        
         <div class="container">
           <router-view></router-view>
         </div>
-        <!--
+        
       </div>
-      <div class="column is-4">
-      </div>
-      -->
+      
   </div>
   </div>
+</div>
 </template>
 <script>
   module.exports = { 

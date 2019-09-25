@@ -1879,6 +1879,7 @@ module.exports = {
 //
 //
 //
+//
 module.exports = {
   data: function data() {
     return {
@@ -32661,14 +32662,14 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "columns is-centered" }, [
-    _c("div", { staticClass: "column is-half" }, [
+    _c("div", { staticClass: "column is-8" }, [
       _c("div", { staticClass: "notification is-primary" }, [
         _c("div", { staticClass: "container" }, [
           _c(
             "h1",
             { staticClass: "title" },
             [
-              _vm._v("\n          Task list\n          \n          "),
+              _vm._v("\n            Task list\n            \n            "),
               _vm.fileList
                 ? _c(
                     "b-dropdown",
@@ -32694,7 +32695,7 @@ var render = function() {
                         },
                         [
                           _vm._v(
-                            "\n                  Документация\n              "
+                            "\n                    Документация\n                "
                           )
                         ]
                       ),
@@ -32717,9 +32718,9 @@ var render = function() {
                               },
                               [
                                 _vm._v(
-                                  "\n              " +
+                                  "\n                " +
                                     _vm._s(file.name) +
-                                    "\n              "
+                                    "\n                "
                                 )
                               ]
                             )
@@ -32736,7 +32737,13 @@ var render = function() {
         ])
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "container" }, [_c("router-view")], 1)
+      _c("div", { staticClass: "columns" }, [
+        _c("div", { staticClass: "column is-2" }),
+        _vm._v(" "),
+        _c("div", { staticClass: "column" }, [
+          _c("div", { staticClass: "container" }, [_c("router-view")], 1)
+        ])
+      ])
     ])
   ])
 }
