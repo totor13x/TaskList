@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Token;
 use App\Task;
+use App\Tag;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -11,6 +12,13 @@ class TaskController extends Controller
     public function index()
     {
       return view('home');
+    }
+
+    public function tags()
+    {
+        $tags = new Tag; 
+        $tags = $tags->all();
+        return response()->json($tags);
     }
     
     public function show(Request $request)

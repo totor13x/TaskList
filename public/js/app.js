@@ -1869,17 +1869,6 @@ module.exports = {
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 module.exports = {
   data: function data() {
     return {
@@ -2017,6 +2006,24 @@ module.exports = {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 module.exports = {
   data: function data() {
     return {
@@ -2026,7 +2033,8 @@ module.exports = {
       lastWatchTypeView: null,
       dateStart: null,
       dateEnd: null,
-      events: []
+      events: [],
+      tags: []
     };
   },
   methods: {
@@ -2152,7 +2160,12 @@ module.exports = {
     }
   },
   mounted: function mounted() {
+    var _this4 = this;
+
     this.load();
+    axios.get('/task/tags').then(function (response) {
+      _this4.tags = response.data;
+    });
   },
   watch: {
     typeView: function typeView() {
@@ -32662,89 +32675,88 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "columns is-centered" }, [
-    _c("div", { staticClass: "column is-8" }, [
-      _c("div", { staticClass: "notification is-primary" }, [
-        _c("div", { staticClass: "container" }, [
-          _c(
-            "h1",
-            { staticClass: "title" },
-            [
-              _vm._v("\n            Task list\n            \n            "),
-              _vm.fileList
-                ? _c(
-                    "b-dropdown",
-                    {
-                      staticClass: "is-pulled-right",
-                      attrs: {
-                        position: "is-bottom-left",
-                        hoverable: "",
-                        "aria-role": "list"
-                      }
-                    },
-                    [
-                      _c(
-                        "b-button",
-                        {
-                          attrs: {
-                            slot: "trigger",
-                            type: "is-primary",
-                            inverted: "",
-                            "icon-right": "menu-down"
-                          },
-                          slot: "trigger"
-                        },
-                        [
-                          _vm._v(
-                            "\n                    Документация\n                "
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _vm._l(_vm.fileList, function(file) {
-                        return _c(
-                          "b-dropdown-item",
+    _c(
+      "div",
+      { staticClass: "column is-8" },
+      [
+        _c("div", { staticClass: "notification is-primary" }, [
+          _c("div", { staticClass: "container" }, [
+            _c(
+              "h1",
+              { staticClass: "title" },
+              [
+                _vm._v("\n            Task list\n            \n            "),
+                _vm.fileList
+                  ? _c(
+                      "b-dropdown",
+                      {
+                        staticClass: "is-pulled-right",
+                        attrs: {
+                          position: "is-bottom-left",
+                          hoverable: "",
+                          "aria-role": "list"
+                        }
+                      },
+                      [
+                        _c(
+                          "b-button",
                           {
-                            key: file.id,
-                            attrs: { "has-link": "", "aria-role": "listitem" }
+                            attrs: {
+                              slot: "trigger",
+                              type: "is-primary",
+                              inverted: "",
+                              "icon-right": "menu-down"
+                            },
+                            slot: "trigger"
                           },
                           [
-                            _c(
-                              "a",
-                              {
-                                attrs: {
-                                  href: "/files/download/" + file.link,
-                                  target: "_blank"
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                " +
-                                    _vm._s(file.name) +
-                                    "\n                "
-                                )
-                              ]
+                            _vm._v(
+                              "\n                    Документация\n                "
                             )
                           ]
-                        )
-                      })
-                    ],
-                    2
-                  )
-                : _vm._e()
-            ],
-            1
-          )
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "columns" }, [
-        _c("div", { staticClass: "column is-2" }),
+                        ),
+                        _vm._v(" "),
+                        _vm._l(_vm.fileList, function(file) {
+                          return _c(
+                            "b-dropdown-item",
+                            {
+                              key: file.id,
+                              attrs: { "has-link": "", "aria-role": "listitem" }
+                            },
+                            [
+                              _c(
+                                "a",
+                                {
+                                  attrs: {
+                                    href: "/files/download/" + file.link,
+                                    target: "_blank"
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                " +
+                                      _vm._s(file.name) +
+                                      "\n                "
+                                  )
+                                ]
+                              )
+                            ]
+                          )
+                        })
+                      ],
+                      2
+                    )
+                  : _vm._e()
+              ],
+              1
+            )
+          ])
+        ]),
         _vm._v(" "),
-        _c("div", { staticClass: "column" }, [
-          _c("div", { staticClass: "container" }, [_c("router-view")], 1)
-        ])
-      ])
-    ])
+        _c("router-view")
+      ],
+      1
+    )
   ])
 }
 var staticRenderFns = []
@@ -32769,216 +32781,249 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c("div", { staticClass: "field container" }, [
-      _c("nav", { staticClass: "level" }, [
-        _c("div", { staticClass: "level-left" }, [
-          _c("div", { staticClass: "level-item" }, [
-            _c("p", { staticClass: "subtitle is-5" }, [
-              _vm._v("\n                    Выведено задач: "),
-              _c("strong", [_vm._v(_vm._s(_vm.countTasks))])
+  return _c("div", { staticClass: "columns" }, [
+    _c(
+      "div",
+      { staticClass: "column is-2" },
+      [
+        _c(
+          "b-field",
+          { attrs: { label: "Категории" } },
+          _vm._l(_vm.tags, function(tag) {
+            return _c("div", { key: tag.id, staticClass: "field" }, [
+              _c("button", { staticClass: "button is-primary is-fullwidth" }, [
+                _c("span", [_vm._v(_vm._s(tag.tag))])
+              ])
             ])
-          ])
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "level-right" }, [
-          _c(
-            "p",
-            { staticClass: "level-item" },
-            [
+          }),
+          0
+        )
+      ],
+      1
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "column" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("div", { staticClass: "field container" }, [
+          _c("nav", { staticClass: "level" }, [
+            _c("div", { staticClass: "level-left" }, [
+              _c("div", { staticClass: "level-item" }, [
+                _c("p", { staticClass: "subtitle is-5" }, [
+                  _vm._v("\n                              Выведено задач: "),
+                  _c("strong", [_vm._v(_vm._s(_vm.countTasks))])
+                ])
+              ])
+            ]),
+            _vm._v(" "),
+            _c("div", { staticClass: "level-right" }, [
               _c(
-                "b-datepicker",
-                {
-                  attrs: {
-                    indicators: "dots",
-                    events: _vm.events,
-                    placeholder: "Введите дату...",
-                    icon: "calendar-today",
-                    editable: ""
-                  },
-                  on: { input: _vm.changeDate },
-                  model: {
-                    value: _vm.dateStart,
-                    callback: function($$v) {
-                      _vm.dateStart = $$v
-                    },
-                    expression: "dateStart"
-                  }
-                },
+                "p",
+                { staticClass: "level-item" },
                 [
                   _c(
-                    "button",
+                    "b-datepicker",
                     {
-                      staticClass: "button is-primary",
-                      on: {
-                        click: function($event) {
-                          _vm.dateStart = new Date()
-                        }
+                      attrs: {
+                        indicators: "dots",
+                        events: _vm.events,
+                        placeholder: "Введите дату...",
+                        icon: "calendar-today",
+                        editable: ""
+                      },
+                      on: { input: _vm.changeDate },
+                      model: {
+                        value: _vm.dateStart,
+                        callback: function($$v) {
+                          _vm.dateStart = $$v
+                        },
+                        expression: "dateStart"
                       }
                     },
                     [
-                      _c("b-icon", { attrs: { icon: "calendar-today" } }),
+                      _c(
+                        "button",
+                        {
+                          staticClass: "button is-primary",
+                          on: {
+                            click: function($event) {
+                              _vm.dateStart = new Date()
+                            }
+                          }
+                        },
+                        [
+                          _c("b-icon", { attrs: { icon: "calendar-today" } }),
+                          _vm._v(" "),
+                          _c("span", [_vm._v("Сегодня")])
+                        ],
+                        1
+                      ),
                       _vm._v(" "),
-                      _c("span", [_vm._v("Сегодня")])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "button is-warning",
-                      on: {
-                        click: function($event) {
-                          _vm.dateStart = null
-                          _vm.changeDate(null)
-                        }
-                      }
-                    },
-                    [
-                      _c("b-icon", { attrs: { icon: "close" } }),
-                      _vm._v(" "),
-                      _c("span", [_vm._v("Очистить")])
-                    ],
-                    1
-                  )
-                ]
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "p",
-            { staticClass: "level-item" },
-            [
-              _c(
-                "b-dropdown",
-                {
-                  attrs: { "aria-role": "list" },
-                  model: {
-                    value: _vm.typeTasksView,
-                    callback: function($$v) {
-                      _vm.typeTasksView = $$v
-                    },
-                    expression: "typeTasksView"
-                  }
-                },
-                [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "button is-primary",
-                      attrs: { slot: "trigger", type: "button" },
-                      slot: "trigger"
-                    },
-                    [
-                      _vm.typeView == "isAll"
-                        ? [_c("span", [_vm._v("Все")])]
-                        : _vm.typeView == "isChecked"
-                        ? [_c("span", [_vm._v("Только выполненные")])]
-                        : _vm.typeView == "isNonChecked"
-                        ? [_c("span", [_vm._v("Только не выполненные")])]
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _c("b-icon", { attrs: { icon: "menu-down" } })
-                    ],
-                    2
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-dropdown-item",
-                    { attrs: { value: "isAll", "aria-role": "listitem" } },
-                    [
-                      _c("div", { staticClass: "media" }, [
-                        _c("div", { staticClass: "media-content" }, [
-                          _c("h3", [_vm._v("Все")])
-                        ])
-                      ])
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-dropdown-item",
-                    { attrs: { value: "isChecked", "aria-role": "listitem" } },
-                    [
-                      _c("div", { staticClass: "media" }, [
-                        _c("div", { staticClass: "media-content" }, [
-                          _c("h3", [_vm._v("Только выполненные")])
-                        ])
-                      ])
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "b-dropdown-item",
-                    {
-                      attrs: { value: "isNonChecked", "aria-role": "listitem" }
-                    },
-                    [
-                      _c("div", { staticClass: "media" }, [
-                        _c("div", { staticClass: "media-content" }, [
-                          _c("h3", [_vm._v("Только не выполненные")])
-                        ])
-                      ])
+                      _c(
+                        "button",
+                        {
+                          staticClass: "button is-warning",
+                          on: {
+                            click: function($event) {
+                              _vm.dateStart = null
+                              _vm.changeDate(null)
+                            }
+                          }
+                        },
+                        [
+                          _c("b-icon", { attrs: { icon: "close" } }),
+                          _vm._v(" "),
+                          _c("span", [_vm._v("Очистить")])
+                        ],
+                        1
+                      )
                     ]
                   )
                 ],
                 1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c("p", { staticClass: "level-item" }, [
-            _c(
-              "a",
-              {
-                staticClass: "button is-success",
-                on: { click: _vm.addNewTask }
-              },
-              [_vm._v("New")]
-            )
-          ])
-        ])
-      ])
-    ]),
-    _vm._v(" "),
-    _vm.tasks
-      ? _c(
-          "div",
-          _vm._l(_vm.tasks, function(task) {
-            return _c(
-              "div",
-              { key: task.id, staticClass: "field box" },
-              [
-                _c("b-checkbox", {
-                  attrs: {
-                    "true-value": 1,
-                    "false-value": 0,
-                    value: task.status
-                  },
-                  on: {
-                    input: function($event) {
-                      return _vm.updateTask(task)
-                    }
-                  },
-                  model: {
-                    value: task.status,
-                    callback: function($$v) {
-                      _vm.$set(task, "status", $$v)
+              ),
+              _vm._v(" "),
+              _c(
+                "p",
+                { staticClass: "level-item" },
+                [
+                  _c(
+                    "b-dropdown",
+                    {
+                      attrs: { "aria-role": "list" },
+                      model: {
+                        value: _vm.typeTasksView,
+                        callback: function($$v) {
+                          _vm.typeTasksView = $$v
+                        },
+                        expression: "typeTasksView"
+                      }
                     },
-                    expression: "task.status"
-                  }
-                }),
-                _vm._v("\n                " + _vm._s(task.text) + "\n        ")
-              ],
-              1
+                    [
+                      _c(
+                        "button",
+                        {
+                          staticClass: "button is-primary",
+                          attrs: { slot: "trigger", type: "button" },
+                          slot: "trigger"
+                        },
+                        [
+                          _vm.typeView == "isAll"
+                            ? [_c("span", [_vm._v("Все")])]
+                            : _vm.typeView == "isChecked"
+                            ? [_c("span", [_vm._v("Только выполненные")])]
+                            : _vm.typeView == "isNonChecked"
+                            ? [_c("span", [_vm._v("Только не выполненные")])]
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c("b-icon", { attrs: { icon: "menu-down" } })
+                        ],
+                        2
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-dropdown-item",
+                        { attrs: { value: "isAll", "aria-role": "listitem" } },
+                        [
+                          _c("div", { staticClass: "media" }, [
+                            _c("div", { staticClass: "media-content" }, [
+                              _c("h3", [_vm._v("Все")])
+                            ])
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-dropdown-item",
+                        {
+                          attrs: { value: "isChecked", "aria-role": "listitem" }
+                        },
+                        [
+                          _c("div", { staticClass: "media" }, [
+                            _c("div", { staticClass: "media-content" }, [
+                              _c("h3", [_vm._v("Только выполненные")])
+                            ])
+                          ])
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "b-dropdown-item",
+                        {
+                          attrs: {
+                            value: "isNonChecked",
+                            "aria-role": "listitem"
+                          }
+                        },
+                        [
+                          _c("div", { staticClass: "media" }, [
+                            _c("div", { staticClass: "media-content" }, [
+                              _c("h3", [_vm._v("Только не выполненные")])
+                            ])
+                          ])
+                        ]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("p", { staticClass: "level-item" }, [
+                _c(
+                  "a",
+                  {
+                    staticClass: "button is-success",
+                    on: { click: _vm.addNewTask }
+                  },
+                  [_vm._v("New")]
+                )
+              ])
+            ])
+          ])
+        ]),
+        _vm._v(" "),
+        _vm.tasks
+          ? _c(
+              "div",
+              _vm._l(_vm.tasks, function(task) {
+                return _c(
+                  "div",
+                  { key: task.id, staticClass: "field box" },
+                  [
+                    _c("b-checkbox", {
+                      attrs: {
+                        "true-value": 1,
+                        "false-value": 0,
+                        value: task.status
+                      },
+                      on: {
+                        input: function($event) {
+                          return _vm.updateTask(task)
+                        }
+                      },
+                      model: {
+                        value: task.status,
+                        callback: function($$v) {
+                          _vm.$set(task, "status", $$v)
+                        },
+                        expression: "task.status"
+                      }
+                    }),
+                    _vm._v(
+                      "\n                          " +
+                        _vm._s(task.text) +
+                        "\n                  "
+                    )
+                  ],
+                  1
+                )
+              }),
+              0
             )
-          }),
-          0
-        )
-      : _vm._e()
+          : _vm._e()
+      ])
+    ])
   ])
 }
 var staticRenderFns = []

@@ -1,99 +1,117 @@
 <template>
-    <div>
-        <div class="field container">
-            <nav class="level">
-            <!-- Left side -->
-            <div class="level-left">
-                <div class="level-item">
-                    <p class="subtitle is-5">
-                        Выведено задач: <strong>{{countTasks}}</strong>
-                    </p>
+
+    <div class="columns">
+      <div class="column is-2">
+          <b-field label="Категории"> 
+          <div class="field" v-for="tag in tags" v-bind:key="tag.id" >
+                <button class="button is-primary is-fullwidth">
+                    <span>{{tag.tag}}</span>
+                </button>
+          </div>
+                        </b-field>
+      </div>
+      <div class="column">
+        
+        <div class="container">
+
+                <div class="field container">
+                    <nav class="level">
+                    <!-- Left side -->
+                    <div class="level-left">
+                        <div class="level-item">
+                            <p class="subtitle is-5">
+                                Выведено задач: <strong>{{countTasks}}</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Right side -->
+                    <div class="level-right">
+                        <p class="level-item">
+                                <b-datepicker 
+                                    v-model="dateStart"
+                                    :indicators="'dots'"
+                                    :events="events"
+                                    @input="changeDate"
+                                    placeholder="Введите дату..."
+                                    icon="calendar-today"
+                                    editable>
+                                    <button class="button is-primary"
+                                        @click="dateStart = new Date()">
+                                        <b-icon icon="calendar-today"></b-icon>
+                                        <span>Сегодня</span>
+                                    </button>
+
+                                    <button class="button is-warning"
+                                        @click="dateStart = null; changeDate(null)">
+                                        <b-icon icon="close"></b-icon>
+                                        <span>Очистить</span>
+                                    </button>
+                                </b-datepicker>
+                        </p>
+                        <p class="level-item">
+                            <b-dropdown v-model="typeTasksView" aria-role="list">
+                                <button class="button is-primary" type="button" slot="trigger">
+                                    <template v-if="typeView=='isAll'">
+                                        <span>Все</span>
+                                    </template>
+                                    <template v-else-if="typeView=='isChecked'">
+                                        <span>Только выполненные</span>
+                                    </template>
+                                    <template v-else-if="typeView=='isNonChecked'">
+                                        <span>Только не выполненные</span>
+                                    </template>
+                                    <b-icon icon="menu-down"></b-icon>
+                                </button>
+
+                                <b-dropdown-item value="isAll" aria-role="listitem">
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <h3>Все</h3>
+                                        </div>
+                                    </div>
+                                </b-dropdown-item>
+
+                                <b-dropdown-item value="isChecked" aria-role="listitem">
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <h3>Только выполненные</h3>
+                                        </div>
+                                    </div>
+                                </b-dropdown-item>
+
+                                <b-dropdown-item value="isNonChecked" aria-role="listitem">
+                                    <div class="media">
+                                        <div class="media-content">
+                                            <h3>Только не выполненные</h3>
+                                        </div>
+                                    </div>
+                                </b-dropdown-item>
+                            </b-dropdown>
+                        </p>
+                        <p class="level-item"><a class="button is-success" @click="addNewTask">New</a></p>
+                    </div>
+                    </nav>
                 </div>
-            </div>
-
-            <!-- Right side -->
-            <div class="level-right">
-                <p class="level-item">
-                        <b-datepicker 
-                            v-model="dateStart"
-                            :indicators="'dots'"
-                            :events="events"
-                            @input="changeDate"
-                            placeholder="Введите дату..."
-                            icon="calendar-today"
-                            editable>
-                            <button class="button is-primary"
-                                @click="dateStart = new Date()">
-                                <b-icon icon="calendar-today"></b-icon>
-                                <span>Сегодня</span>
-                            </button>
-
-                            <button class="button is-warning"
-                                @click="dateStart = null; changeDate(null)">
-                                <b-icon icon="close"></b-icon>
-                                <span>Очистить</span>
-                            </button>
-                        </b-datepicker>
-                </p>
-                <p class="level-item">
-                    <b-dropdown v-model="typeTasksView" aria-role="list">
-                        <button class="button is-primary" type="button" slot="trigger">
-                            <template v-if="typeView=='isAll'">
-                                <span>Все</span>
-                            </template>
-                            <template v-else-if="typeView=='isChecked'">
-                                <span>Только выполненные</span>
-                            </template>
-                            <template v-else-if="typeView=='isNonChecked'">
-                                <span>Только не выполненные</span>
-                            </template>
-                            <b-icon icon="menu-down"></b-icon>
-                        </button>
-
-                        <b-dropdown-item value="isAll" aria-role="listitem">
-                            <div class="media">
-                                <div class="media-content">
-                                    <h3>Все</h3>
-                                </div>
-                            </div>
-                        </b-dropdown-item>
-
-                        <b-dropdown-item value="isChecked" aria-role="listitem">
-                            <div class="media">
-                                <div class="media-content">
-                                    <h3>Только выполненные</h3>
-                                </div>
-                            </div>
-                        </b-dropdown-item>
-
-                        <b-dropdown-item value="isNonChecked" aria-role="listitem">
-                            <div class="media">
-                                <div class="media-content">
-                                    <h3>Только не выполненные</h3>
-                                </div>
-                            </div>
-                        </b-dropdown-item>
-                    </b-dropdown>
-                </p>
-                <p class="level-item"><a class="button is-success" @click="addNewTask">New</a></p>
-            </div>
-            </nav>
+                <div v-if='tasks'>
+                    <div class='field box'
+                        v-for="task in tasks" v-bind:key="task.id" >
+                        <b-checkbox 
+                            v-bind:true-value=1
+                            v-bind:false-value=0
+                            v-bind:value="task.status"
+                            v-model="task.status"
+                            @input="updateTask(task)"
+                            
+                            ></b-checkbox>
+                            {{ task.text }}
+                    </div>
+                </div>
         </div>
-        <div v-if='tasks'>
-            <div class='field box'
-                v-for="task in tasks" v-bind:key="task.id" >
-                <b-checkbox 
-                    v-bind:true-value=1
-                    v-bind:false-value=0
-                    v-bind:value="task.status"
-                    v-model="task.status"
-                    @input="updateTask(task)"
-                    
-                    ></b-checkbox>
-                    {{ task.text }}
-            </div>
-        </div>
-    </div>
+        
+      </div>
+      
+  </div>
 </template>
 <script>
     module.exports = {
@@ -106,6 +124,7 @@
                 dateStart: null,
                 dateEnd: null,
                 events: [],
+                tags: [],
             }
         },
         methods: {
@@ -248,6 +267,10 @@
         },
         mounted: function() {
             this.load()
+            axios.get('/task/tags')
+            .then(response => {
+                this.tags = response.data
+            })
         },
         watch: {
             typeView: function() {

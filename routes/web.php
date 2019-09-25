@@ -25,6 +25,7 @@ Route::get('/task/show',
         'uses'=>'TaskController@show'
     ]
 );
+Route::get('task/tags', 'TaskController@tags');
 
 Route::get('files/show', 'FileController@show');
 Route::get('files/download/{link}', 'FileController@download');
