@@ -6,6 +6,10 @@
             <h1 class="title">
                 Task list | Admin Panel
             </h1>
+
+            <h1 class="subtitle">
+                {{admin.name}} | {{admin.email}}
+            </h1>
             </div>
         </div>
         <div class="columns">
@@ -35,8 +39,13 @@
     export default {
         data() {
             return {
+                admin: [],
                 isActive: true
             }
-        }
+        },
+        mounted: function() {
+            this.admin = this.$attrs.admin
+            console.log(this.admin)
+        },
     }
 </script>

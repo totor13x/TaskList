@@ -25,15 +25,22 @@ Route::get('/task/show',
         'uses'=>'TaskController@show'
     ]
 );
+
+Route::get('files/show', 'FileController@show');
+Route::get('files/download/{link}', 'FileController@download');
+
 Route::group(['prefix' => 'admin'], function () {
-    Route::get('login', 'AdminController@login');
-    Route::post('login/validate', 'Auth\LoginController@login')->name('admin.login.validate');
-    Route::post('logout', 'Auth\LoginController@logout')->name('logout');
-    Route::get('file/upload', 'AdminController@index');
-    Route::post('file/upload', 'Admin\FileController@create');
-    Route::get('file/show', 'Admin\FileController@show');
+    Route::get('login', 'AdminController@login')->name('admin.login')->middleware('guest');
+    Route::post('login/validate', 'Auth\LoginController@login')->name('admin.login.validate')->middleware('guest');
+    Route::post('logout', 'Auth\LoginController@logout')->name('logout')->middleware('guest');
+
+    Route::get('file/upload', 'AdminController@index')->middleware('auth');
+    Route::post('file/upload', 'Admin\FileController@create')->middleware('auth');
+    Route::post('file/update', 'Admin\FileController@update')->middleware('auth');
+    Route::get('file/delete/{id}', 'Admin\FileController@delete')->middleware('auth');
+    Route::get('file/show', 'Admin\FileController@show')->middleware('auth');
     
-    Route::get('/', 'AdminController@index');
+    Route::get('/', 'AdminController@index')->middleware('auth');
 });
 
-Route::get('/{any}', 'TaskController@index')->where('any', '.*');
+Route::get('/', 'TaskController@index');

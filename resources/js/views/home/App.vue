@@ -5,6 +5,24 @@
         <div class="container">
           <h1 class="title">
             Task list
+            
+            <b-dropdown position="is-bottom-left" class="is-pulled-right" hoverable aria-role="list" v-if="fileList" >
+                <b-button 
+                  type="is-primary" 
+                  inverted 
+                  slot="trigger" 
+                  icon-right="menu-down">
+                    Документация
+                </b-button>
+
+                <b-dropdown-item has-link aria-role="listitem" 
+                v-for="file in fileList" v-bind:key="file.id">
+                <a :href="`/files/download/${file.link}`" target="_blank">
+                {{file.name}}
+                </a>
+                </b-dropdown-item>
+                
+            </b-dropdown>
           </h1>
         </div>
       </div>
@@ -25,6 +43,19 @@
 </template>
 <script>
   module.exports = { 
+    data: function(){
+      return {
+        fileList: [],
+      }
+    },
+    mounted: function()
+    {
+      axios.get('files/show')
+      .then(response => {
+        console.log(response.data)
+        this.fileList = response.data
+      })
+    },
     beforeCreate: function() {
       var token = localStorage.getItem('token')
       if (token != undefined && token != null) 

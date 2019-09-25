@@ -1871,11 +1871,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      admin: [],
       isActive: true
     };
+  },
+  mounted: function mounted() {
+    this.admin = this.$attrs.admin;
+    console.log(this.admin);
   }
 });
 
@@ -1937,22 +1946,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 var ModalForm = {
-  props: ['name'],
-  template: "            \n                <div class=\"modal-card\" style=\"width: auto\">\n                    <header class=\"modal-card-head\">\n                        <p class=\"modal-card-title\">\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435: {{name}}</p>\n                    </header>\n                    <section class=\"modal-card-body\">\n                        <b-field label=\"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\">\n                            <b-input\n                                type=\"name\"\n                                :value=\"name\"\n                                placeholder=\"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0444\u0430\u0439\u043B\u0430\"\n                                required>\n                            </b-input>\n                        </b-field>\n\n                    </section>\n                    <footer class=\"modal-card-foot\">\n                        <button class=\"button is-danger\">\u0423\u0434\u0430\u043B\u0438\u0442\u044C</button>\n                        <button class=\"button is-primary\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button>\n                        <button class=\"button\" type=\"button\" @click=\"$parent.close()\">Close</button>\n                    </footer>\n                </div>\n            </form>\n        "
+  props: ['file'],
+  methods: {
+    updateUploadedFile: function updateUploadedFile() {
+      var this_ = this;
+      var formData = new FormData();
+      formData.append('name', this.file.name);
+      formData.append('id', this.file.id);
+      axios.post('/admin/file/update', formData).then(function (response) {
+        console.log(response);
+        this_.$parent.close();
+      });
+    },
+    deleteUploadedFile: function deleteUploadedFile() {
+      var self = this.$parent.$parent;
+      var this_ = this;
+      axios.get('/admin/file/delete/' + this.file.id).then(function (response) {
+        self.files.splice(self.files.indexOf(this_.file), 1); //self.delete(self.files, self.file)
+
+        console.log(response);
+        this_.$parent.close();
+      });
+    }
+  },
+  template: "            \n                <div class=\"modal-card\" style=\"max-width: 500px\">\n                    <header class=\"modal-card-head\">\n                        <p class=\"modal-card-title\">\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435: {{file.name}}</p>\n                    </header>\n                    <section class=\"modal-card-body\">\n                        <b-field label=\"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\">\n                            <b-input\n                                type=\"name\"\n                                v-model=\"file.name\"\n                                placeholder=\"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435 \u0444\u0430\u0439\u043B\u0430\"\n                                required>\n                            </b-input>\n                        </b-field>\n\n                    </section>\n                    <footer class=\"modal-card-foot\">\n                        <button class=\"button is-danger\"\n                        @click=\"deleteUploadedFile()\">\u0423\u0434\u0430\u043B\u0438\u0442\u044C</button>\n                        <button class=\"button is-primary\" \n                        @click=\"updateUploadedFile()\">\u0421\u043E\u0445\u0440\u0430\u043D\u0438\u0442\u044C</button>\n                        <button class=\"button\" type=\"button\" @click=\"$parent.close()\">Close</button>\n                    </footer>\n                </div>\n            </form>\n        "
 };
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -1965,7 +1983,7 @@ var ModalForm = {
       files: undefined,
       isComponentModalActive: false,
       formProps: {
-        name: 'name'
+        file: undefined
       }
     };
   },
@@ -1995,7 +2013,7 @@ var ModalForm = {
       });
     },
     modalFile: function modalFile(file) {
-      this.formProps.name = file.name;
+      this.formProps.file = file;
       this.isComponentModalActive = true;
     }
   },
@@ -32487,7 +32505,23 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "container" }, [
-    _vm._m(0),
+    _c("div", { staticClass: "notification is-primary" }, [
+      _c("div", { staticClass: "container" }, [
+        _c("h1", { staticClass: "title" }, [
+          _vm._v("\n              Task list | Admin Panel\n          ")
+        ]),
+        _vm._v(" "),
+        _c("h1", { staticClass: "subtitle" }, [
+          _vm._v(
+            "\n              " +
+              _vm._s(_vm.admin.name) +
+              " | " +
+              _vm._s(_vm.admin.email) +
+              "\n          "
+          )
+        ])
+      ])
+    ]),
     _vm._v(" "),
     _c("div", { staticClass: "columns" }, [
       _c(
@@ -32532,20 +32566,7 @@ var render = function() {
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "notification is-primary" }, [
-      _c("div", { staticClass: "container" }, [
-        _c("h1", { staticClass: "title" }, [
-          _vm._v("\n              Task list | Admin Panel\n          ")
-        ])
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -32682,74 +32703,51 @@ var render = function() {
                 )
               ],
               1
-            ),
-            _vm._v(" "),
-            _c(
-              "button",
-              {
-                staticClass: "button is-primary is-medium",
-                on: {
-                  click: function($event) {
-                    _vm.isComponentModalActive = true
-                  }
-                }
-              },
-              [_vm._v("\n                Launch component modal\n            ")]
             )
           ],
           1
         ),
         _vm._v(" "),
         _c("div", { staticClass: "column" }, [
-          _c("div", { staticClass: "columns" }, [
-            _c("div", { staticClass: "column" }, [
-              _vm.files
-                ? _c(
-                    "div",
-                    _vm._l(_vm.files, function(file) {
-                      return _c(
-                        "b-field",
-                        { key: file.id },
-                        [
-                          _c(
-                            "b-button",
-                            {
-                              staticClass: "is-fullwidth",
-                              on: {
-                                click: function($event) {
-                                  return _vm.modalFile(file)
-                                }
+          _vm.files
+            ? _c(
+                "div",
+                [
+                  _vm._l(_vm.files, function(file) {
+                    return _c(
+                      "b-field",
+                      { key: file.id },
+                      [
+                        _c(
+                          "b-button",
+                          {
+                            staticClass: "is-fullwidth",
+                            on: {
+                              click: function($event) {
+                                return _vm.modalFile(file)
                               }
-                            },
-                            [_vm._v(_vm._s(file.name))]
+                            }
+                          },
+                          [_vm._v(_vm._s(file.name))]
+                        )
+                      ],
+                      1
+                    )
+                  }),
+                  _vm._v(" "),
+                  _vm.files.length == 0
+                    ? _c("div", [
+                        _c("div", { staticClass: "box" }, [
+                          _vm._v(
+                            "\n                        Нет загруженных файлов\n                    "
                           )
-                        ],
-                        1
-                      )
-                    }),
-                    1
-                  )
-                : _vm._e()
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "column" }, [
-              _c("div", { staticClass: "box" }, [
-                _vm.file
-                  ? _c("div", [
-                      _vm._v(
-                        "\n                            12313\n                        "
-                      )
-                    ])
-                  : _c("div", [
-                      _vm._v(
-                        "\n                        " +
-                          _vm._s(_vm.DataInfo) +
-                          "\n                        "
-                      )
-                    ])
-              ])
-            ])
-          ])
+                        ])
+                      ])
+                    : _vm._e()
+                ],
+                2
+              )
+            : _vm._e()
         ])
       ])
     ],

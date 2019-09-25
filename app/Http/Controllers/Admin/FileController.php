@@ -28,4 +28,30 @@ class FileController extends Controller
       $filenew->save();
       return response()->json(['success'=>'You have successfully upload file.']);
     }
+
+    public function update(Request $request)
+    {
+      $this->validate($request, [
+          'name' => 'required|max:255', 
+      ]);
+
+      $id = $request->id;
+      $name = $request->name;
+
+      $file = File::find($id);
+      $file->name = $name;
+      $file->save();
+
+      return response()->json(['success'=>'Данные обновлены']);
+      //dd(File::find());
+    }
+
+    public function delete(Request $request, $id)
+    {
+      $file = File::find($id);
+      Storage::disk('local')->delete('public/'.$file->link); 
+
+      $file->delete();
+      return response()->json(['success'=>'Файл удален']);
+    }
 }

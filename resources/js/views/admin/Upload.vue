@@ -1,7 +1,7 @@
 <template>
     <section>
         <b-modal :active.sync="isComponentModalActive" has-modal-card>
-            <modal-form v-bind="formProps"></modal-form>
+            <modal-form v-bind="formProps" ></modal-form>
         </b-modal>
         <div class="columns">
             <div class="column is-4">
@@ -28,28 +28,15 @@
                 <b-field>
                     <b-button @click="getUploadedFiles" class="is-fullwidth">Загрузить</b-button>
                 </b-field>
-                 <button class="button is-primary is-medium"
-                    @click="isComponentModalActive = true">
-                    Launch component modal
-                </button>
             </div>
             <div class="column">
-                <div class="columns">
-                    <div class="column">
-                        <div v-if="files">
-                            <b-field v-for="file in files" v-bind:key="file.id">
-                                <b-button @click="modalFile(file)" class="is-fullwidth">{{file.name}}</b-button>
-                            </b-field>
-                        </div>
-                    </div>
-                    <div class="column">
+                <div v-if="files">
+                    <b-field v-for="file in files" v-bind:key="file.id">
+                        <b-button @click="modalFile(file)" class="is-fullwidth">{{file.name}}</b-button>
+                    </b-field>
+                    <div v-if="files.length==0">
                         <div class="box">
-                            <div v-if="file">
-                                12313
-                            </div>
-                            <div v-else>
-                            {{DataInfo}}
-                            </div>
+                            Нет загруженных файлов
                         </div>
                     </div>
                 </div>
@@ -60,17 +47,44 @@
 
 <script>
 const ModalForm = {
-        props: ['name'],
+        props: ['file'],
+        methods: {
+            updateUploadedFile()
+            {
+                var this_ = this
+                let formData = new FormData();
+                formData.append('name',this.file.name)
+                formData.append('id',this.file.id)
+                axios.post('/admin/file/update', formData)
+                .then(function (response) {
+                    console.log(response)
+                    this_.$parent.close()
+                })
+            },
+            deleteUploadedFile()
+            {
+                var self = this.$parent.$parent
+                var this_ = this
+                axios.get('/admin/file/delete/'+this.file.id)
+                .then(function (response) {
+
+                    self.files.splice(self.files.indexOf(this_.file), 1);
+                    //self.delete(self.files, self.file)
+                    console.log(response)
+                    this_.$parent.close()
+                })
+            }
+        },
         template: `            
-                <div class="modal-card" style="width: auto">
+                <div class="modal-card" style="max-width: 500px">
                     <header class="modal-card-head">
-                        <p class="modal-card-title">Редактирование: {{name}}</p>
+                        <p class="modal-card-title">Редактирование: {{file.name}}</p>
                     </header>
                     <section class="modal-card-body">
                         <b-field label="Название">
                             <b-input
                                 type="name"
-                                :value="name"
+                                v-model="file.name"
                                 placeholder="Название файла"
                                 required>
                             </b-input>
@@ -78,8 +92,10 @@ const ModalForm = {
 
                     </section>
                     <footer class="modal-card-foot">
-                        <button class="button is-danger">Удалить</button>
-                        <button class="button is-primary">Сохранить</button>
+                        <button class="button is-danger"
+                        @click="deleteUploadedFile()">Удалить</button>
+                        <button class="button is-primary" 
+                        @click="updateUploadedFile()">Сохранить</button>
                         <button class="button" type="button" @click="$parent.close()">Close</button>
                     </footer>
                 </div>
@@ -97,7 +113,7 @@ const ModalForm = {
                 files: undefined,
                 isComponentModalActive: false,
                 formProps: {
-                    name: 'name',
+                    file: undefined,
                 }
             }
         },
@@ -131,7 +147,7 @@ const ModalForm = {
             },
             modalFile(file)
             {
-                this.formProps.name = file.name
+                this.formProps.file = file
                 this.isComponentModalActive = true
             }
         },

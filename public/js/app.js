@@ -1861,7 +1861,38 @@ module.exports = {
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 module.exports = {
+  data: function data() {
+    return {
+      fileList: []
+    };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('files/show').then(function (response) {
+      console.log(response.data);
+      _this.fileList = response.data;
+    });
+  },
   beforeCreate: function beforeCreate() {
     var token = localStorage.getItem('token');
 
@@ -32631,26 +32662,85 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "columns is-centered" }, [
     _c("div", { staticClass: "column is-half" }, [
-      _vm._m(0),
+      _c("div", { staticClass: "notification is-primary" }, [
+        _c("div", { staticClass: "container" }, [
+          _c(
+            "h1",
+            { staticClass: "title" },
+            [
+              _vm._v("\n          Task list\n          \n          "),
+              _vm.fileList
+                ? _c(
+                    "b-dropdown",
+                    {
+                      staticClass: "is-pulled-right",
+                      attrs: {
+                        position: "is-bottom-left",
+                        hoverable: "",
+                        "aria-role": "list"
+                      }
+                    },
+                    [
+                      _c(
+                        "b-button",
+                        {
+                          attrs: {
+                            slot: "trigger",
+                            type: "is-primary",
+                            inverted: "",
+                            "icon-right": "menu-down"
+                          },
+                          slot: "trigger"
+                        },
+                        [
+                          _vm._v(
+                            "\n                  Документация\n              "
+                          )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _vm._l(_vm.fileList, function(file) {
+                        return _c(
+                          "b-dropdown-item",
+                          {
+                            key: file.id,
+                            attrs: { "has-link": "", "aria-role": "listitem" }
+                          },
+                          [
+                            _c(
+                              "a",
+                              {
+                                attrs: {
+                                  href: "/files/download/" + file.link,
+                                  target: "_blank"
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n              " +
+                                    _vm._s(file.name) +
+                                    "\n              "
+                                )
+                              ]
+                            )
+                          ]
+                        )
+                      })
+                    ],
+                    2
+                  )
+                : _vm._e()
+            ],
+            1
+          )
+        ])
+      ]),
       _vm._v(" "),
       _c("div", { staticClass: "container" }, [_c("router-view")], 1)
     ])
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "notification is-primary" }, [
-      _c("div", { staticClass: "container" }, [
-        _c("h1", { staticClass: "title" }, [
-          _vm._v("\n          Task list\n        ")
-        ])
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
