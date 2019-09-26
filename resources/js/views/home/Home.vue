@@ -121,10 +121,27 @@
 </template>
 <script>
     const ModalForm = {
+        data: function(){
+            return {
+                coords: [54.79402948133831, 56.05672011904906],
+                 markerIcon: {
+                    layout: 'default#imageWithContent',
+                    imageHref: 'https://image.flaticon.com/icons/png/512/33/33447.png',
+                    imageSize: [43, 43],
+                    imageOffset: [0, 0],
+                    content: '123 v12',
+                    contentOffset: [0, 15],
+                    contentLayout: '<div style="background: red; width: 50px; color: #FFFFFF; font-weight: bold;">$[properties.iconContent]</div>'
+                    }
+            }
+        },
         props: [
             'task',
         ],
         methods: {
+            onClick(e) {
+                this.coords = e.get('coords');
+            }
         },
         template: `            
             <div class="modal-card" style="max-width: 500px">
@@ -143,7 +160,15 @@
                         style="height:350px"> 
                         <yandex-map
                         style="height:100%"
-                        :coords="[54.79455819660086, 56.057674884795986]">
+                        :coords="coords" 
+                         :icon="markerIcon"
+                        @click="onClick">
+                             <ymap-marker 
+                            :coords="coords" 
+                            marker-id="123" 
+                            hint-content="some hint" 
+                            />
+                            
                         </yandex-map>
                     </b-field>
                 </section>

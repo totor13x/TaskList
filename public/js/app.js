@@ -2031,9 +2031,27 @@ module.exports = {
 //
 //
 var ModalForm = {
+  data: function data() {
+    return {
+      coords: [54.79402948133831, 56.05672011904906],
+      markerIcon: {
+        layout: 'default#imageWithContent',
+        imageHref: 'https://image.flaticon.com/icons/png/512/33/33447.png',
+        imageSize: [43, 43],
+        imageOffset: [0, 0],
+        content: '123 v12',
+        contentOffset: [0, 15],
+        contentLayout: '<div style="background: red; width: 50px; color: #FFFFFF; font-weight: bold;">$[properties.iconContent]</div>'
+      }
+    };
+  },
   props: ['task'],
-  methods: {},
-  template: "            \n        <div class=\"modal-card\" style=\"max-width: 500px\">\n            <header class=\"modal-card-head\">\n                <p class=\"modal-card-title\">\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435:</p>\n            </header>\n            <section class=\"modal-card-body\">\n                <b-field> \n                    <b-input\n                        type=\"name\"\n                        placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\"\n                        required>\n                    </b-input>\n                </b-field>\n                <b-field\n                    style=\"height:350px\"> \n                    <yandex-map\n                    style=\"height:100%\"\n                    :coords=\"[54.79455819660086, 56.057674884795986]\">\n                    </yandex-map>\n                </b-field>\n            </section>\n            <footer class=\"modal-card-foot\">\n                <button class=\"button\" type=\"button\" @click=\"$parent.close()\">Close</button>\n            </footer>\n        </div>\n    "
+  methods: {
+    onClick: function onClick(e) {
+      this.coords = e.get('coords');
+    }
+  },
+  template: "            \n        <div class=\"modal-card\" style=\"max-width: 500px\">\n            <header class=\"modal-card-head\">\n                <p class=\"modal-card-title\">\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435:</p>\n            </header>\n            <section class=\"modal-card-body\">\n                <b-field> \n                    <b-input\n                        type=\"name\"\n                        placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\"\n                        required>\n                    </b-input>\n                </b-field>\n                <b-field\n                    style=\"height:350px\"> \n                    <yandex-map\n                    style=\"height:100%\"\n                    :coords=\"coords\" \n                     :icon=\"markerIcon\"\n                    @click=\"onClick\">\n                         <ymap-marker \n                        :coords=\"coords\" \n                        marker-id=\"123\" \n                        hint-content=\"some hint\" \n                        />\n                        \n                    </yandex-map>\n                </b-field>\n            </section>\n            <footer class=\"modal-card-foot\">\n                <button class=\"button\" type=\"button\" @click=\"$parent.close()\">Close</button>\n            </footer>\n        </div>\n    "
 };
 module.exports = {
   components: {
