@@ -2024,6 +2024,9 @@ module.exports = {
 //
 //
 //
+//
+//
+//
 module.exports = {
   data: function data() {
     return {
@@ -2034,7 +2037,13 @@ module.exports = {
       dateStart: null,
       dateEnd: null,
       events: [],
-      tags: []
+      tags: {
+        isAll: 'Все',
+        "default": 'Стандарт',
+        meets: 'Встречи'
+      },
+      tagSelect: 'isAll',
+      lastWatchtagSelect: null
     };
   },
   methods: {
@@ -2060,6 +2069,8 @@ module.exports = {
         _this2.updateRecordsSync();
 
         _this2.updateRecordsFromType();
+
+        _this2.updateRecordsFromTags();
 
         _this2.updateRecordsFromDate();
       });
@@ -2103,6 +2114,7 @@ module.exports = {
 
       this.updateRecordsSync();
       this.updateRecordsFromType();
+      this.updateRecordsFromTags();
       this.updateRecordsFromDate();
     },
     updateRecordsSync: function updateRecordsSync() {
@@ -2117,6 +2129,17 @@ module.exports = {
         temp.map(function (value, key) {
           var formattedTime = new Date(value.created_at);
           if (formattedTime >= self.dateStart && formattedTime <= self.dateEnd) self.tasks.push(value);
+        });
+      }
+    },
+    updateRecordsFromTags: function updateRecordsFromTags() {
+      var self = this;
+      var temp = this.tasks;
+
+      if (this.tagSelect != 'isAll') {
+        this.tasks = [];
+        temp.map(function (value, key) {
+          if (self.tagSelect == value.tag) self.tasks.push(value);
         });
       }
     },
@@ -2148,9 +2171,10 @@ module.exports = {
           maxlength: 255
         },
         onConfirm: function onConfirm(value) {
-          axios.post('/task/send', {
-            'text': value
-          }).then(function (response) {
+          var param = {};
+          param.text = value;
+          if (_this3.dateEnd !== undefined && _this3.dateEnd != null) param.created_at = Date.parse(_this3.dateEnd) / 1000;
+          axios.post('/task/send', param).then(function (response) {
             if (response.data[0].id) {
               _this3.updateTasks(response.data);
             }
@@ -2160,19 +2184,30 @@ module.exports = {
     }
   },
   mounted: function mounted() {
-    var _this4 = this;
-
     this.load();
-    axios.get('/task/tags').then(function (response) {
-      _this4.tags = response.data;
-    });
+    /*
+    axios.get('/task/tags')
+    .then(response => {
+        this.tags = response.data
+    })
+    */
   },
   watch: {
     typeView: function typeView() {
       if (this.typeView != this.lastWatchTypeView) {
+        this.lastWatchTypeView = this.typeView;
         this.updateRecordsSync();
         this.updateRecordsFromType();
-        this.lastWatchTypeView = this.typeView;
+        this.updateRecordsFromTags();
+        this.updateRecordsFromDate();
+      }
+    },
+    tagSelect: function tagSelect() {
+      if (this.tagSelect != this.lastWatchtagSelect) {
+        this.lastWatchtagSelect = this.tagSelect;
+        this.updateRecordsSync();
+        this.updateRecordsFromType();
+        this.updateRecordsFromTags();
         this.updateRecordsFromDate();
       }
     }
@@ -32786,20 +32821,27 @@ var render = function() {
       "div",
       { staticClass: "column is-2" },
       [
-        _c(
-          "b-field",
-          { attrs: { label: "Категории" } },
-          _vm._l(_vm.tags, function(tag) {
-            return _c("div", { key: tag.id, staticClass: "field" }, [
-              _c("button", { staticClass: "button is-primary is-fullwidth" }, [
-                _c("span", [_vm._v(_vm._s(tag.tag))])
-              ])
-            ])
-          }),
-          0
-        )
+        _c("b-field", { attrs: { label: "Категории" } }),
+        _vm._v(" "),
+        _vm._l(_vm.tags, function(name, tag) {
+          return _c("div", { key: tag, staticClass: "field" }, [
+            _c(
+              "button",
+              {
+                staticClass: "button is-fullwidth",
+                class: { "is-primary": _vm.tagSelect == tag },
+                on: {
+                  click: function($event) {
+                    _vm.tagSelect = tag
+                  }
+                }
+              },
+              [_c("span", [_vm._v(_vm._s(name))])]
+            )
+          ])
+        })
       ],
-      1
+      2
     ),
     _vm._v(" "),
     _c("div", { staticClass: "column" }, [

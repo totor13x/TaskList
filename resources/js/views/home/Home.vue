@@ -2,13 +2,16 @@
 
     <div class="columns">
       <div class="column is-2">
-          <b-field label="Категории"> 
-          <div class="field" v-for="tag in tags" v-bind:key="tag.id" >
-                <button class="button is-primary is-fullwidth">
-                    <span>{{tag.tag}}</span>
-                </button>
-          </div>
-                        </b-field>
+            <b-field label="Категории"> 
+            </b-field>
+                <div class="field" v-for="(name, tag) in tags" 
+                v-bind:key="tag">
+                    <button class="button is-fullwidth" 
+                    v-bind:class="{ 'is-primary': tagSelect==tag }"
+                    @click="tagSelect=tag">
+                        <span>{{name}}</span>
+                    </button>
+                 </div>
       </div>
       <div class="column">
         
@@ -124,7 +127,13 @@
                 dateStart: null,
                 dateEnd: null,
                 events: [],
-                tags: [],
+                tags: {
+                    isAll: 'Все',
+                    default: 'Стандарт',
+                    meets: 'Встречи',
+                },
+                tagSelect: 'isAll',
+                lastWatchtagSelect: null,
             }
         },
         methods: {
@@ -148,6 +157,7 @@
                 .then(response => {
                     this.updateRecordsSync()
                     this.updateRecordsFromType()
+                    this.updateRecordsFromTags()
                     this.updateRecordsFromDate()
                 })
             },
@@ -195,6 +205,7 @@
                 }
                 this.updateRecordsSync()
                 this.updateRecordsFromType()
+                this.updateRecordsFromTags()
                 this.updateRecordsFromDate()
             },
             updateRecordsSync()
@@ -216,6 +227,19 @@
                                 self.tasks.push(value);
                         })
                     }
+            },
+            updateRecordsFromTags()
+            {
+                var self = this   
+                var temp = this.tasks;
+                if (this.tagSelect != 'isAll')
+                {
+                    this.tasks = [];
+                    temp.map(function(value, key) {
+                        if (self.tagSelect == value.tag)
+                            self.tasks.push(value);
+                    })
+                }
             },
             updateRecordsFromType()
             {
@@ -253,7 +277,13 @@
                         maxlength: 255,
                     },
                     onConfirm: (value) => {
-                        axios.post('/task/send', {'text': value})
+                        var param = {}
+                        param.text = value
+
+                        if (this.dateEnd !== undefined && this.dateEnd != null)
+                            param.created_at = Date.parse(this.dateEnd)/1000
+                            
+                        axios.post('/task/send', param)
                         .then(response => {
                             if (response.data[0].id)
                             {
@@ -267,19 +297,31 @@
         },
         mounted: function() {
             this.load()
+            /*
             axios.get('/task/tags')
             .then(response => {
                 this.tags = response.data
             })
+            */
         },
         watch: {
             typeView: function() {
                 if (this.typeView != this.lastWatchTypeView)
-                {
-                    this.updateRecordsSync()
-                    this.updateRecordsFromType()                    
+                {           
                     this.lastWatchTypeView = this.typeView
-                    
+                    this.updateRecordsSync()
+                    this.updateRecordsFromType()         
+                    this.updateRecordsFromTags()
+                    this.updateRecordsFromDate()
+                }
+            },
+            tagSelect: function() {
+                if (this.tagSelect != this.lastWatchtagSelect)
+                {      
+                    this.lastWatchtagSelect = this.tagSelect
+                    this.updateRecordsSync()
+                    this.updateRecordsFromType()              
+                    this.updateRecordsFromTags()
                     this.updateRecordsFromDate()
                 }
             }

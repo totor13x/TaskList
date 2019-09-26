@@ -14,7 +14,7 @@ class AddTagsToTasks extends Migration
     public function up()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->integer('tag')->default(1);
+            $table->string('tag')->default('default');
         });
     }
 

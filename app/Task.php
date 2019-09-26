@@ -9,6 +9,8 @@ class Task extends Model
     protected $fillable = [
         'text',
         'status',
+        'tag',
+        'created_at',
     ];
 
     public function token()

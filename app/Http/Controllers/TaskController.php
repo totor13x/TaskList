@@ -56,7 +56,9 @@ class TaskController extends Controller
             $this->validate($request, [
                 'text' => 'required|max:255', 
             ]);
-            $data = $request->only('text');
+            $data = $request->all();
+            $data['created_at'] = date('Y-m-d H:i:s', $data['created_at']);
+            //dd($data);
             $token = Token::where('token', $request->headers->get('authorization'))->get()->first();
             $task = new Task($data);
             //$task = new $user->tasks;
