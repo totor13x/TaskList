@@ -4,8 +4,17 @@ import VueRouter from 'vue-router'
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
 
+const settings = {
+  apiKey: 'd435cde1-1c31-4cb4-82ad-cca85b41941f',
+  lang: 'ru_RU',
+  coordorder: 'latlong',
+  version: '2.1'
+}
+import YmapPlugin from 'vue-yandex-maps'
+
 Vue.use(VueRouter)
 Vue.use(Buefy)
+Vue.use(YmapPlugin, settings)
 
 import App from './views/home/App'
 import Home from './views/home/Home'
@@ -27,7 +36,7 @@ const router = new VueRouter({
 
 const app = new Vue({
     el: '#app',
-    components: { App },
+    components: { App,YmapPlugin },
     router,
     data: function() {
         return {

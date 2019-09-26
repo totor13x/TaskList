@@ -114,10 +114,49 @@
         
       </div>
       
+        <b-modal :active.sync="isComponentModalActive" has-modal-card>
+            <modal-form></modal-form>
+        </b-modal>
   </div>
 </template>
 <script>
+    const ModalForm = {
+        props: [
+            'task',
+        ],
+        methods: {
+        },
+        template: `            
+            <div class="modal-card" style="max-width: 500px">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Редактирование:</p>
+                </header>
+                <section class="modal-card-body">
+                    <b-field> 
+                        <b-input
+                            type="name"
+                            placeholder="Введите текст"
+                            required>
+                        </b-input>
+                    </b-field>
+                    <b-field
+                        style="height:350px"> 
+                        <yandex-map
+                        style="height:100%"
+                        :coords="[54.79455819660086, 56.057674884795986]">
+                        </yandex-map>
+                    </b-field>
+                </section>
+                <footer class="modal-card-foot">
+                    <button class="button" type="button" @click="$parent.close()">Close</button>
+                </footer>
+            </div>
+        `
+    }
     module.exports = {
+        components: {
+            ModalForm
+        },
         data: function(){
             return {
                 tasksOriginal: null,
@@ -134,6 +173,7 @@
                 },
                 tagSelect: 'isAll',
                 lastWatchtagSelect: null,
+                isComponentModalActive: false,
             }
         },
         methods: {
@@ -270,28 +310,34 @@
 
             },
             addNewTask() {
-                this.$buefy.dialog.prompt({
-                    confirmText: 'Сохранить',
-                    inputAttrs: {
-                        placeholder: 'Введите вашу задачу',
-                        maxlength: 255,
-                    },
-                    onConfirm: (value) => {
-                        var param = {}
-                        param.text = value
+                if(this.tagSelect != "meets") {
+                    this.$buefy.dialog.prompt({
+                        confirmText: 'Сохранить',
+                        inputAttrs: {
+                            placeholder: 'Введите вашу задачу',
+                            maxlength: 255,
+                        },
+                        onConfirm: (value) => {
+                            var param = {}
+                            param.text = value
 
-                        if (this.dateEnd !== undefined && this.dateEnd != null)
-                            param.created_at = Date.parse(this.dateEnd)/1000
-                            
-                        axios.post('/task/send', param)
-                        .then(response => {
-                            if (response.data[0].id)
-                            {
-                                this.updateTasks(response.data)
-                            }
-                        })
-                    },
-                })
+                            if (this.dateEnd !== undefined && this.dateEnd != null)
+                                param.created_at = Date.parse(this.dateEnd)/1000
+                                
+                            axios.post('/task/send', param)
+                            .then(response => {
+                                if (response.data[0].id)
+                                {
+                                    this.updateTasks(response.data)
+                                }
+                            })
+                        },
+                    })
+                }
+                else
+                {
+                    this.isComponentModalActive = true
+                }
             },
             
         },

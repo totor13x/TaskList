@@ -2027,7 +2027,18 @@ module.exports = {
 //
 //
 //
+//
+//
+//
+var ModalForm = {
+  props: ['task'],
+  methods: {},
+  template: "            \n        <div class=\"modal-card\" style=\"max-width: 500px\">\n            <header class=\"modal-card-head\">\n                <p class=\"modal-card-title\">\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435:</p>\n            </header>\n            <section class=\"modal-card-body\">\n                <b-field> \n                    <b-input\n                        type=\"name\"\n                        placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\"\n                        required>\n                    </b-input>\n                </b-field>\n                <b-field\n                    style=\"height:350px\"> \n                    <yandex-map\n                    style=\"height:100%\"\n                    :coords=\"[54.79455819660086, 56.057674884795986]\">\n                    </yandex-map>\n                </b-field>\n            </section>\n            <footer class=\"modal-card-foot\">\n                <button class=\"button\" type=\"button\" @click=\"$parent.close()\">Close</button>\n            </footer>\n        </div>\n    "
+};
 module.exports = {
+  components: {
+    ModalForm: ModalForm
+  },
   data: function data() {
     return {
       tasksOriginal: null,
@@ -2043,7 +2054,8 @@ module.exports = {
         meets: 'Встречи'
       },
       tagSelect: 'isAll',
-      lastWatchtagSelect: null
+      lastWatchtagSelect: null,
+      isComponentModalActive: false
     };
   },
   methods: {
@@ -2164,23 +2176,27 @@ module.exports = {
     addNewTask: function addNewTask() {
       var _this3 = this;
 
-      this.$buefy.dialog.prompt({
-        confirmText: 'Сохранить',
-        inputAttrs: {
-          placeholder: 'Введите вашу задачу',
-          maxlength: 255
-        },
-        onConfirm: function onConfirm(value) {
-          var param = {};
-          param.text = value;
-          if (_this3.dateEnd !== undefined && _this3.dateEnd != null) param.created_at = Date.parse(_this3.dateEnd) / 1000;
-          axios.post('/task/send', param).then(function (response) {
-            if (response.data[0].id) {
-              _this3.updateTasks(response.data);
-            }
-          });
-        }
-      });
+      if (this.tagSelect != "meets") {
+        this.$buefy.dialog.prompt({
+          confirmText: 'Сохранить',
+          inputAttrs: {
+            placeholder: 'Введите вашу задачу',
+            maxlength: 255
+          },
+          onConfirm: function onConfirm(value) {
+            var param = {};
+            param.text = value;
+            if (_this3.dateEnd !== undefined && _this3.dateEnd != null) param.created_at = Date.parse(_this3.dateEnd) / 1000;
+            axios.post('/task/send', param).then(function (response) {
+              if (response.data[0].id) {
+                _this3.updateTasks(response.data);
+              }
+            });
+          }
+        });
+      } else {
+        this.isComponentModalActive = true;
+      }
     }
   },
   mounted: function mounted() {
@@ -32816,257 +32832,281 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "columns" }, [
-    _c(
-      "div",
-      { staticClass: "column is-2" },
-      [
-        _c("b-field", { attrs: { label: "Категории" } }),
-        _vm._v(" "),
-        _vm._l(_vm.tags, function(name, tag) {
-          return _c("div", { key: tag, staticClass: "field" }, [
-            _c(
-              "button",
-              {
-                staticClass: "button is-fullwidth",
-                class: { "is-primary": _vm.tagSelect == tag },
-                on: {
-                  click: function($event) {
-                    _vm.tagSelect = tag
+  return _c(
+    "div",
+    { staticClass: "columns" },
+    [
+      _c(
+        "div",
+        { staticClass: "column is-2" },
+        [
+          _c("b-field", { attrs: { label: "Категории" } }),
+          _vm._v(" "),
+          _vm._l(_vm.tags, function(name, tag) {
+            return _c("div", { key: tag, staticClass: "field" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "button is-fullwidth",
+                  class: { "is-primary": _vm.tagSelect == tag },
+                  on: {
+                    click: function($event) {
+                      _vm.tagSelect = tag
+                    }
                   }
-                }
-              },
-              [_c("span", [_vm._v(_vm._s(name))])]
-            )
-          ])
-        })
-      ],
-      2
-    ),
-    _vm._v(" "),
-    _c("div", { staticClass: "column" }, [
-      _c("div", { staticClass: "container" }, [
-        _c("div", { staticClass: "field container" }, [
-          _c("nav", { staticClass: "level" }, [
-            _c("div", { staticClass: "level-left" }, [
-              _c("div", { staticClass: "level-item" }, [
-                _c("p", { staticClass: "subtitle is-5" }, [
-                  _vm._v("\n                              Выведено задач: "),
-                  _c("strong", [_vm._v(_vm._s(_vm.countTasks))])
+                },
+                [_c("span", [_vm._v(_vm._s(name))])]
+              )
+            ])
+          })
+        ],
+        2
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "column" }, [
+        _c("div", { staticClass: "container" }, [
+          _c("div", { staticClass: "field container" }, [
+            _c("nav", { staticClass: "level" }, [
+              _c("div", { staticClass: "level-left" }, [
+                _c("div", { staticClass: "level-item" }, [
+                  _c("p", { staticClass: "subtitle is-5" }, [
+                    _vm._v("\n                              Выведено задач: "),
+                    _c("strong", [_vm._v(_vm._s(_vm.countTasks))])
+                  ])
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "level-right" }, [
+                _c(
+                  "p",
+                  { staticClass: "level-item" },
+                  [
+                    _c(
+                      "b-datepicker",
+                      {
+                        attrs: {
+                          indicators: "dots",
+                          events: _vm.events,
+                          placeholder: "Введите дату...",
+                          icon: "calendar-today",
+                          editable: ""
+                        },
+                        on: { input: _vm.changeDate },
+                        model: {
+                          value: _vm.dateStart,
+                          callback: function($$v) {
+                            _vm.dateStart = $$v
+                          },
+                          expression: "dateStart"
+                        }
+                      },
+                      [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "button is-primary",
+                            on: {
+                              click: function($event) {
+                                _vm.dateStart = new Date()
+                              }
+                            }
+                          },
+                          [
+                            _c("b-icon", { attrs: { icon: "calendar-today" } }),
+                            _vm._v(" "),
+                            _c("span", [_vm._v("Сегодня")])
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "button",
+                          {
+                            staticClass: "button is-warning",
+                            on: {
+                              click: function($event) {
+                                _vm.dateStart = null
+                                _vm.changeDate(null)
+                              }
+                            }
+                          },
+                          [
+                            _c("b-icon", { attrs: { icon: "close" } }),
+                            _vm._v(" "),
+                            _c("span", [_vm._v("Очистить")])
+                          ],
+                          1
+                        )
+                      ]
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "p",
+                  { staticClass: "level-item" },
+                  [
+                    _c(
+                      "b-dropdown",
+                      {
+                        attrs: { "aria-role": "list" },
+                        model: {
+                          value: _vm.typeTasksView,
+                          callback: function($$v) {
+                            _vm.typeTasksView = $$v
+                          },
+                          expression: "typeTasksView"
+                        }
+                      },
+                      [
+                        _c(
+                          "button",
+                          {
+                            staticClass: "button is-primary",
+                            attrs: { slot: "trigger", type: "button" },
+                            slot: "trigger"
+                          },
+                          [
+                            _vm.typeView == "isAll"
+                              ? [_c("span", [_vm._v("Все")])]
+                              : _vm.typeView == "isChecked"
+                              ? [_c("span", [_vm._v("Только выполненные")])]
+                              : _vm.typeView == "isNonChecked"
+                              ? [_c("span", [_vm._v("Только не выполненные")])]
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _c("b-icon", { attrs: { icon: "menu-down" } })
+                          ],
+                          2
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-dropdown-item",
+                          {
+                            attrs: { value: "isAll", "aria-role": "listitem" }
+                          },
+                          [
+                            _c("div", { staticClass: "media" }, [
+                              _c("div", { staticClass: "media-content" }, [
+                                _c("h3", [_vm._v("Все")])
+                              ])
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-dropdown-item",
+                          {
+                            attrs: {
+                              value: "isChecked",
+                              "aria-role": "listitem"
+                            }
+                          },
+                          [
+                            _c("div", { staticClass: "media" }, [
+                              _c("div", { staticClass: "media-content" }, [
+                                _c("h3", [_vm._v("Только выполненные")])
+                              ])
+                            ])
+                          ]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-dropdown-item",
+                          {
+                            attrs: {
+                              value: "isNonChecked",
+                              "aria-role": "listitem"
+                            }
+                          },
+                          [
+                            _c("div", { staticClass: "media" }, [
+                              _c("div", { staticClass: "media-content" }, [
+                                _c("h3", [_vm._v("Только не выполненные")])
+                              ])
+                            ])
+                          ]
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c("p", { staticClass: "level-item" }, [
+                  _c(
+                    "a",
+                    {
+                      staticClass: "button is-success",
+                      on: { click: _vm.addNewTask }
+                    },
+                    [_vm._v("New")]
+                  )
                 ])
               ])
-            ]),
-            _vm._v(" "),
-            _c("div", { staticClass: "level-right" }, [
-              _c(
-                "p",
-                { staticClass: "level-item" },
-                [
-                  _c(
-                    "b-datepicker",
-                    {
-                      attrs: {
-                        indicators: "dots",
-                        events: _vm.events,
-                        placeholder: "Введите дату...",
-                        icon: "calendar-today",
-                        editable: ""
-                      },
-                      on: { input: _vm.changeDate },
-                      model: {
-                        value: _vm.dateStart,
-                        callback: function($$v) {
-                          _vm.dateStart = $$v
-                        },
-                        expression: "dateStart"
-                      }
-                    },
+            ])
+          ]),
+          _vm._v(" "),
+          _vm.tasks
+            ? _c(
+                "div",
+                _vm._l(_vm.tasks, function(task) {
+                  return _c(
+                    "div",
+                    { key: task.id, staticClass: "field box" },
                     [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "button is-primary",
-                          on: {
-                            click: function($event) {
-                              _vm.dateStart = new Date()
-                            }
+                      _c("b-checkbox", {
+                        attrs: {
+                          "true-value": 1,
+                          "false-value": 0,
+                          value: task.status
+                        },
+                        on: {
+                          input: function($event) {
+                            return _vm.updateTask(task)
                           }
                         },
-                        [
-                          _c("b-icon", { attrs: { icon: "calendar-today" } }),
-                          _vm._v(" "),
-                          _c("span", [_vm._v("Сегодня")])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          staticClass: "button is-warning",
-                          on: {
-                            click: function($event) {
-                              _vm.dateStart = null
-                              _vm.changeDate(null)
-                            }
-                          }
-                        },
-                        [
-                          _c("b-icon", { attrs: { icon: "close" } }),
-                          _vm._v(" "),
-                          _c("span", [_vm._v("Очистить")])
-                        ],
-                        1
-                      )
-                    ]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "p",
-                { staticClass: "level-item" },
-                [
-                  _c(
-                    "b-dropdown",
-                    {
-                      attrs: { "aria-role": "list" },
-                      model: {
-                        value: _vm.typeTasksView,
-                        callback: function($$v) {
-                          _vm.typeTasksView = $$v
-                        },
-                        expression: "typeTasksView"
-                      }
-                    },
-                    [
-                      _c(
-                        "button",
-                        {
-                          staticClass: "button is-primary",
-                          attrs: { slot: "trigger", type: "button" },
-                          slot: "trigger"
-                        },
-                        [
-                          _vm.typeView == "isAll"
-                            ? [_c("span", [_vm._v("Все")])]
-                            : _vm.typeView == "isChecked"
-                            ? [_c("span", [_vm._v("Только выполненные")])]
-                            : _vm.typeView == "isNonChecked"
-                            ? [_c("span", [_vm._v("Только не выполненные")])]
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _c("b-icon", { attrs: { icon: "menu-down" } })
-                        ],
-                        2
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "b-dropdown-item",
-                        { attrs: { value: "isAll", "aria-role": "listitem" } },
-                        [
-                          _c("div", { staticClass: "media" }, [
-                            _c("div", { staticClass: "media-content" }, [
-                              _c("h3", [_vm._v("Все")])
-                            ])
-                          ])
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "b-dropdown-item",
-                        {
-                          attrs: { value: "isChecked", "aria-role": "listitem" }
-                        },
-                        [
-                          _c("div", { staticClass: "media" }, [
-                            _c("div", { staticClass: "media-content" }, [
-                              _c("h3", [_vm._v("Только выполненные")])
-                            ])
-                          ])
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "b-dropdown-item",
-                        {
-                          attrs: {
-                            value: "isNonChecked",
-                            "aria-role": "listitem"
-                          }
-                        },
-                        [
-                          _c("div", { staticClass: "media" }, [
-                            _c("div", { staticClass: "media-content" }, [
-                              _c("h3", [_vm._v("Только не выполненные")])
-                            ])
-                          ])
-                        ]
+                        model: {
+                          value: task.status,
+                          callback: function($$v) {
+                            _vm.$set(task, "status", $$v)
+                          },
+                          expression: "task.status"
+                        }
+                      }),
+                      _vm._v(
+                        "\n                          " +
+                          _vm._s(task.text) +
+                          "\n                  "
                       )
                     ],
                     1
                   )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c("p", { staticClass: "level-item" }, [
-                _c(
-                  "a",
-                  {
-                    staticClass: "button is-success",
-                    on: { click: _vm.addNewTask }
-                  },
-                  [_vm._v("New")]
-                )
-              ])
-            ])
-          ])
-        ]),
-        _vm._v(" "),
-        _vm.tasks
-          ? _c(
-              "div",
-              _vm._l(_vm.tasks, function(task) {
-                return _c(
-                  "div",
-                  { key: task.id, staticClass: "field box" },
-                  [
-                    _c("b-checkbox", {
-                      attrs: {
-                        "true-value": 1,
-                        "false-value": 0,
-                        value: task.status
-                      },
-                      on: {
-                        input: function($event) {
-                          return _vm.updateTask(task)
-                        }
-                      },
-                      model: {
-                        value: task.status,
-                        callback: function($$v) {
-                          _vm.$set(task, "status", $$v)
-                        },
-                        expression: "task.status"
-                      }
-                    }),
-                    _vm._v(
-                      "\n                          " +
-                        _vm._s(task.text) +
-                        "\n                  "
-                    )
-                  ],
-                  1
-                )
-              }),
-              0
-            )
-          : _vm._e()
-      ])
-    ])
-  ])
+                }),
+                0
+              )
+            : _vm._e()
+        ])
+      ]),
+      _vm._v(" "),
+      _c(
+        "b-modal",
+        {
+          attrs: { active: _vm.isComponentModalActive, "has-modal-card": "" },
+          on: {
+            "update:active": function($event) {
+              _vm.isComponentModalActive = $event
+            }
+          }
+        },
+        [_c("modal-form")],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -36073,6 +36113,22 @@ if (inBrowser && window.Vue) {
 }
 
 /* harmony default export */ __webpack_exports__["default"] = (VueRouter);
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-yandex-maps/dist/vue-yandex-maps.js":
+/*!**************************************************************!*\
+  !*** ./node_modules/vue-yandex-maps/dist/vue-yandex-maps.js ***!
+  \**************************************************************/
+/*! exports provided: default, yandexMap, ymapMarker */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "yandexMap", function() { return b; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ymapMarker", function() { return v; });
+function t(e){return(t="function"==typeof Symbol&&"symbol"==typeof Symbol.iterator?function(t){return typeof t}:function(t){return t&&"function"==typeof Symbol&&t.constructor===Symbol&&t!==Symbol.prototype?"symbol":typeof t})(e)}function e(t,e){for(var r=0;r<e.length;r++){var o=e[r];o.enumerable=o.enumerable||!1,o.configurable=!0,"value"in o&&(o.writable=!0),Object.defineProperty(t,o.key,o)}}function r(t,e,r){return e in t?Object.defineProperty(t,e,{value:r,enumerable:!0,configurable:!0,writable:!0}):t[e]=r,t}function o(t){return function(t){if(Array.isArray(t)){for(var e=0,r=new Array(t.length);e<t.length;e++)r[e]=t[e];return r}}(t)||function(t){if(Symbol.iterator in Object(t)||"[object Arguments]"===Object.prototype.toString.call(t))return Array.from(t)}(t)||function(){throw new TypeError("Invalid attempt to spread non-iterable instance")}()}function n(t){return(t.icon.color||"blue")+(t.icon.glyph?a(t.icon.glyph):t.icon.content?"Stretchy":"")}function a(t){return t.charAt(0).toUpperCase()+t.slice(1)}function i(t){return t.map(function(t){return Array.isArray(t)?i(t):+t})}function s(e,r){var o=[];return function e(r,n){if(r===n)return!0;if(r instanceof Date&&n instanceof Date)return+r==+n;if("object"!==t(r)||"object"!==t(n))return!1;if(function(t,e){for(var r=o.length;r--;)if(!(o[r][0]!==t&&o[r][0]!==e||o[r][1]!==e&&o[r][1]!==t))return!0;return!1}(r,n))return!0;o.push([r,n]);var a=Object.keys(r),i=a.length;if(Object.keys(n).length!==i)return!1;for(;i--;)if(!e(r[a[i]],n[a[i]]))return!1;return!0}(e,r)}function c(t,e,r){s(t,e)||(r.rerender&&clearTimeout(r.rerender),r.rerender=setTimeout(function(){return r.updateMap&&r.updateMap()},10))}var l=new(function(){function t(){!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.events={},this.ymapReady=!1,this.scriptIsNotAttached=!0}var r,o,n;return r=t,(o=[{key:"$on",value:function(t,e){var r=this;return this.events[t]||(this.events[t]=[]),this.events[t].push(e),function(){r.events[t]=r.events[t].filter(function(t){return e!==t})}}},{key:"$emit",value:function(t,e){var r=this.events[t];r&&r.forEach(function(t){return t(e)})}}])&&e(r.prototype,o),n&&e(r,n),t}()),u=["fullscreenControl","geolocationControl","routeEditor","rulerControl","searchControl","trafficControl","typeSelector","zoomControl","routePanelControl"];function p(t){return 0===t.filter(function(t){return![].concat(u,["default"]).includes(t)}).length}function m(t,e){var r=a(t);if(!e)return r;switch(r){case"Placemark":return"Point";case"Polyline":return"LineString";default:return r}}function f(e,r){var o=r?{type:"Feature",id:e.properties.markerId,geometry:{type:e.markerType,coordinates:e.coords},properties:e.properties,options:e.options}:new ymaps[e.markerType](e.coords,e.properties,e.options);return o.clusterName=e.clusterName,r||function(e,r){if(e&&"object"===t(e))for(var o in e)r.events.add(o,e[o])}(e.callbacks,o),o}var y={pluginOptions:{},data:function(){return{ymapEventBus:l,ymapId:"yandexMap"+Math.round(1e5*Math.random()),myMap:{},style:this.ymapClass?"":"width: 100%; height: 100%;"}},props:{coords:{type:Array,validator:function(t){return!t.filter(function(t){return isNaN(t)}).length},required:!0},zoom:{validator:function(t){return!isNaN(t)},default:18},clusterOptions:{type:Object,default:function(){return{}}},clusterCallbacks:{type:Object,default:function(){return{}}},behaviors:{type:Array,default:function(){return["default"]}},controls:{type:Array,default:function(){return["default"]},validator:function(t){return p(t)}},detailedControls:{type:Object,validator:function(t){return p(Object.keys(t))}},scrollZoom:{type:Boolean,default:!0},zoomControl:Object,mapType:{type:String,default:"map",validator:function(t){return["map","satellite","hybrid"].includes(t)}},placemarks:{type:Array,default:function(){return[]}},useObjectManager:{type:Boolean,default:!1},objectManagerClusterize:{type:Boolean,default:!0},ymapClass:String,initWithoutMarkers:{type:Boolean,default:!0},mapLink:String,debug:{type:Boolean,default:!1},settings:{type:Object,default:function(){return{}}},options:{type:Object,default:function(){return{}}}},computed:{coordinates:function(){return this.coords.map(function(t){return+t})}},methods:{getMarkersFromSlots:function(){return this.$slots.default&&this.$slots.default.map(function(t){var e=t.componentOptions&&t.componentOptions.propsData;if(e){var r={};if(e.balloonTemplate)r={balloonContentLayout:ymaps.templateLayoutFactory.createClass(e.balloonTemplate)};var o={markerId:e.markerId,markerType:e.markerType||"placemark",coords:i(e.coords),hintContent:e.hintContent,markerFill:e.markerFill,circleRadius:+e.circleRadius,clusterName:e.clusterName,markerStroke:e.markerStroke,balloon:e.balloon,callbacks:e.callbacks,properties:e.properties,options:e.options,balloonOptions:r};return e.icon&&["default#image","default#imageWithContent"].includes(e.icon.layout)?(o.iconContent=e.icon.content,o.iconLayout=e.icon.layout,o.iconImageHref=e.icon.imageHref,o.iconImageSize=e.icon.imageSize,o.iconImageOffset=e.icon.imageOffset,o.iconContentOffset=e.icon.contentOffset,e.icon.contentLayout&&"string"==typeof e.icon.contentLayout&&(o.iconContentLayout=ymaps.templateLayoutFactory.createClass(e.icon.contentLayout))):o.icon=e.icon,o}}).filter(function(t){return t&&t.markerType})||[]},createMarkers:function(){for(var t=this,e=[],r=this.getMarkersFromSlots(),o=0;o<r.length;o++){var a=r[o],i=m(a.markerType,this.useObjectManager),s={hintContent:a.hintContent,iconContent:a.icon&&a.icon.content||a.iconContent,markerId:a.markerId},c=a.balloon?{balloonContentHeader:a.balloon.header,balloonContentBody:a.balloon.body,balloonContentFooter:a.balloon.footer}:{},l=Object.assign(s,c,a.properties),u=a.iconLayout?{iconLayout:a.iconLayout,iconImageHref:a.iconImageHref,iconImageSize:a.iconImageSize,iconImageOffset:a.iconImageOffset,iconContentOffset:a.iconContentOffset,iconContentLayout:a.iconContentLayout}:{preset:a.icon&&"islands#".concat(n(a),"Icon")},p=a.markerStroke?{strokeColor:a.markerStroke.color||"0066ffff",strokeOpacity:parseFloat(a.markerStroke.opacity)>=0?parseFloat(a.markerStroke.opacity):1,strokeStyle:a.markerStroke.style,strokeWidth:parseFloat(a.markerStroke.width)>=0?parseFloat(a.markerStroke.width):1}:{},y=a.markerFill?{fill:a.markerFill.enabled||!0,fillColor:a.markerFill.color||"0066ff99",fillOpacity:parseFloat(a.markerFill.opacity)>=0?parseFloat(a.markerFill.opacity):1,fillImageHref:a.markerFill.imageHref||""}:{},d=Object.assign(u,p,y,a.balloonOptions,a.options);"Circle"===i&&(a.coords=[a.coords,a.circleRadius]);var h=f({properties:l,options:d,markerType:i,coords:a.coords,clusterName:a.clusterName,callbacks:a.callbacks},this.useObjectManager);e.push(h)}return this.placemarks&&this.placemarks.forEach(function(r){var o=r.markerType,n=void 0===o?"Placemark":o,a=r.properties,i=r.options,s=void 0===i?{}:i,c=r.coords,l=r.clusterName,u=r.callbacks,p=r.balloonTemplate,y=m(n,t.useObjectManager);if(p){var d=ymaps.templateLayoutFactory.createClass(p);s.balloonContentLayout=d}var h=f({properties:a,options:s,markerType:y,coords:c,clusterName:l,callbacks:u},t.useObjectManager);e.push(h)}),e},setMarkers:function(){var t={options:this.clusterOptions,callbacks:this.clusterCallbacks,map:this.myMap,useObjectManager:this.useObjectManager,objectManagerClusterize:this.objectManagerClusterize};!function(t,e){var r=e.options,n=e.callbacks,a=e.map,i=e.useObjectManager,s=e.objectManagerClusterize,c={},l=[],u=!0,p=!1,m=void 0;try{for(var f,y=t[Symbol.iterator]();!(u=(f=y.next()).done);u=!0){var d=f.value;d.clusterName?c[d.clusterName]=c[d.clusterName]?[].concat(o(c[d.clusterName]),[d]):[d]:l.push(d)}}catch(t){p=!0,m=t}finally{try{u||null==y.return||y.return()}finally{if(p)throw m}}for(var h in c){var b=r[h]||{},v=n[h]||{},k=b.layout||"\n      <div>{{ properties.balloonContentHeader }}</div>\n      <div>{{ properties.balloonContentBody }}</div>\n      <div>{{ properties.balloonContentFooter }}</div>\n    ";b.clusterBalloonItemContentLayout=ymaps.templateLayoutFactory.createClass(k);var g=b.clusterLayout?ymaps.templateLayoutFactory.createClass(b.clusterLayout):b.clusterBalloonContentLayout||"cluster#balloonTwoColumns";b.clusterBalloonContentLayout=g;var O=b.clusterIconContentLayout;if(b.clusterIconContentLayout=O&&ymaps.templateLayoutFactory.createClass(O),i){var C=new ymaps.ObjectManager(Object.assign({clusterize:s},b));for(var j in v)C.clusters.events.add(j,v[j]);C.add(c[h]),a.geoObjects.add(C)}else{var M=new ymaps.Clusterer(b);for(var w in v)M.events.add(w,v[w]);b.createCluster&&(M.createCluster=b.createCluster),M.add(c[h]),a.geoObjects.add(M)}}if(l.length){var S=i?new ymaps.ObjectManager({clusterize:!1}):new ymaps.GeoObjectCollection;l.forEach(function(t){return S.add(t)}),a.geoObjects.add(S)}}(this.createMarkers(),t)},init:function(){var t=this;if(window.ymaps&&ymaps.GeoObjectCollection&&(this.initWithoutMarkers||this.$slots.default||this.placemarks.length)){if(this.$emit("map-initialization-started"),this.myMap=new ymaps.Map(this.ymapId,{center:this.coordinates,zoom:+this.zoom,behaviors:this.behaviors,controls:this.controls,type:"yandex#".concat(this.mapType)},this.options),this.myMap.events.add("click",function(e){return t.$emit("click",e)}),this.zoomControl&&(this.myMap.controls.remove("zoomControl"),this.myMap.controls.add(new ymaps.control.ZoomControl(this.zoomControl))),this.detailedControls)Object.keys(this.detailedControls).forEach(function(e){t.myMap.controls.remove(e),t.myMap.controls.add(e,t.detailedControls[e])});!1===this.scrollZoom&&this.myMap.behaviors.disable("scrollZoom"),this.setMarkers(),this.$emit("map-was-initialized",this.myMap)}}},watch:{coordinates:function(t){this.myMap.panTo&&this.myMap.panTo(t)},placemarks:function(){window.ymaps&&(this.myMap.geoObjects&&this.myMap.geoObjects.removeAll(),this.setMarkers())},zoom:function(){this.myMap.setZoom(this.zoom)}},render:function(t){return t("section",{class:"ymap-container",ref:"mapContainer"},[t("div",{attrs:{id:this.ymapId,class:this.ymapClass,style:this.style}}),t("div",{ref:"markersContainer",attrs:{class:"ymap-markers"}},[this.$slots.default])])},mounted:function(){var t=this;this.markerObserver=new MutationObserver(function(){this.myMap.geoObjects&&this.myMap.geoObjects.removeAll(),this.setMarkers()}.bind(this)),this.mapObserver=new MutationObserver(function(){this.myMap.container.fitToViewport()}.bind(this));var e=this.$refs,o=e.markersContainer,n=e.mapContainer;if(this.markerObserver.observe(o,{attributes:!0,childList:!0,characterData:!0,subtree:!0}),this.mapObserver.observe(n,{attributes:!0,childList:!0,characterData:!0,subtree:!1}),this.ymapEventBus.scriptIsNotAttached){var a=document.createElement("SCRIPT"),i=function(t){for(var e=1;e<arguments.length;e++){var o=null!=arguments[e]?arguments[e]:{},n=Object.keys(o);"function"==typeof Object.getOwnPropertySymbols&&(n=n.concat(Object.getOwnPropertySymbols(o).filter(function(t){return Object.getOwnPropertyDescriptor(o,t).enumerable}))),n.forEach(function(e){r(t,e,o[e])})}return t}({},this.$options.pluginOptions,this.settings),s=i.apiKey,c=void 0===s?"":s,l=i.lang,u=void 0===l?"ru_RU":l,p=i.version,m=void 0===p?"2.1":p,f=i.coordorder,y=void 0===f?"latlong":f,d=this.debug?"debug":"release",h="lang=".concat(u).concat(c&&"&apikey=".concat(c),"&mode=").concat(d,"&coordorder=").concat(y),b=this.mapLink||"https://api-maps.yandex.ru/".concat(m,"/?").concat(h);a.setAttribute("src",b),a.setAttribute("async",""),a.setAttribute("defer",""),document.body.appendChild(a),this.ymapEventBus.scriptIsNotAttached=!1,a.onload=function(){t.ymapEventBus.ymapReady=!0,t.ymapEventBus.$emit("scriptIsLoaded")}}this.ymapEventBus.ymapReady?ymaps.ready(this.init):this.ymapEventBus.$on("scriptIsLoaded",function(){t.ymapEventBus.updateMap=function(){t.myMap.geoObjects&&t.myMap.geoObjects.removeAll(),t.setMarkers()},ymaps.ready(t.init)})},beforeDestroy:function(){this.myMap.geoObjects&&this.myMap.geoObjects.removeAll(),this.markerObserver.disconnect()}},d=["placemark","polyline","rectangle","polygon","circle"],h={data:function(){return{ymapEventBus:l,unwatchArr:[]}},props:{coords:{type:Array,required:!0,validator:function(t){return!t.filter(function(t){return isNaN(t)}).length}},hintContent:String,icon:Object,balloon:Object,markerType:{type:String,validator:function(t){return d.includes(t.toLowerCase())},default:"placemark"},markerFill:Object,markerStroke:Object,clusterName:String,circleRadius:{validator:function(t){return!isNaN(t)},default:1e3},callbacks:Object,balloonTemplate:String,markerId:{type:[String,Number],required:!0},properties:Object,options:Object},render:function(){},mounted:function(){var t=this;for(var e in this.$props)this.unwatchArr.push(this.$watch(e,function(e,r){return c(e,r,t.ymapEventBus)}))},beforeDestroy:function(){this.unwatchArr.forEach(function(t){return t()})}};y.install=function(t){var e=arguments.length>1&&void 0!==arguments[1]?arguments[1]:{};y.pluginOptions=e,t.component("yandex-map",y),t.component("ymap-marker",h)},"undefined"!=typeof window&&window.Vue&&window.Vue.use(y);var b=y,v=h;/* harmony default export */ __webpack_exports__["default"] = (y);
 
 
 /***/ }),
@@ -48121,16 +48177,25 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var buefy__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! buefy */ "./node_modules/buefy/dist/esm/index.js");
 /* harmony import */ var buefy_dist_buefy_css__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! buefy/dist/buefy.css */ "./node_modules/buefy/dist/buefy.css");
 /* harmony import */ var buefy_dist_buefy_css__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(buefy_dist_buefy_css__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _views_home_App__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./views/home/App */ "./resources/js/views/home/App.vue");
-/* harmony import */ var _views_home_Home__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/home/Home */ "./resources/js/views/home/Home.vue");
+/* harmony import */ var vue_yandex_maps__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! vue-yandex-maps */ "./node_modules/vue-yandex-maps/dist/vue-yandex-maps.js");
+/* harmony import */ var _views_home_App__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/home/App */ "./resources/js/views/home/App.vue");
+/* harmony import */ var _views_home_Home__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./views/home/Home */ "./resources/js/views/home/Home.vue");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 
 
 
 
+var settings = {
+  apiKey: 'd435cde1-1c31-4cb4-82ad-cca85b41941f',
+  lang: 'ru_RU',
+  coordorder: 'latlong',
+  version: '2.1'
+};
+
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(buefy__WEBPACK_IMPORTED_MODULE_2__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_yandex_maps__WEBPACK_IMPORTED_MODULE_4__["default"], settings);
 
 
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
@@ -48138,7 +48203,7 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   routes: [{
     path: '/',
     name: 'home',
-    component: _views_home_Home__WEBPACK_IMPORTED_MODULE_5__["default"]
+    component: _views_home_Home__WEBPACK_IMPORTED_MODULE_6__["default"]
   }, {
     path: '/auth',
     name: 'auth'
@@ -48147,7 +48212,8 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
   components: {
-    App: _views_home_App__WEBPACK_IMPORTED_MODULE_4__["default"]
+    App: _views_home_App__WEBPACK_IMPORTED_MODULE_5__["default"],
+    YmapPlugin: vue_yandex_maps__WEBPACK_IMPORTED_MODULE_4__["default"]
   },
   router: router,
   data: function data() {
