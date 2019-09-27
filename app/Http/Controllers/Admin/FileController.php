@@ -16,6 +16,9 @@ class FileController extends Controller
     }
     public function create(Request $request)
     {
+      $this->validate($request, [
+        'file' => 'required|mimes:pdf'
+      ]);
       $fileName = rand(1,50)."_".time().'.'.$request->file->getClientOriginalExtension();
       //$request->file->move(public_path('upload'), $fileName);
       Storage::disk('local')->putFileAs('public', $request->file, $fileName);
