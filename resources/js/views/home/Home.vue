@@ -108,6 +108,10 @@
                             
                             ></b-checkbox>
                             {{ task.text }}
+                            <b-button v-if="task.tag=='meets'" class="is-pulled-right is-small"
+                                type="is-primary"
+                                icon-right="eye-outline" 
+                                @click="viewMapMeet(task)"/>
                     </div>
                 </div>
         </div>
@@ -115,34 +119,78 @@
       </div>
       
         <b-modal :active.sync="isComponentModalActive" has-modal-card>
-            <modal-form></modal-form>
+            <modal-form v-model="formProps"></modal-form>
         </b-modal>
   </div>
 </template>
 <script>
-    const ModalForm = {
+    let ModalForm = {
         data: function(){
             return {
+                value: undefined,
                 coords: [54.79402948133831, 56.05672011904906],
             }
         },
         props: [
             'task',
+            //'coords',
         ],
         methods: {
-            onClick(e) {
+            onClick(e)
+            {
+                console.log(this.$parent)
                 this.coords = e.get('coords');
+                this.$parent.$parent.formProps.coords = this.coords
+            },
+            onClose()
+            {
+                this.task = undefined;
+                this.coords = [54.79402948133831, 56.05672011904906];
+                //console.log(this.props.coords)
+                this.$parent.close()
+            },
+            onSend()
+            {
+                var self = this
+                var param = {}
+                param.text = this.value
+
+                if (self.$parent.$parent.dateEnd !== undefined && self.$parent.$parent.dateEnd != null)
+                    param.created_at = Date.parse(this.$parent.$parent.dateEnd)/1000
+                    
+                param.coords = JSON.stringify(this.coords)
+                param.tag = self.$parent.$parent.tagSelect
+
+                axios.post('/task/send', param)
+                .then(response => {
+                    if (response.data[0].id)
+                    {
+                        self.$parent.$parent.updateTasks(response.data)
+                        self.$parent.close()
+                    }
+                })
+                this.task = undefined;
+            }
+        },
+        computed:
+        {
+            ModalTitle: function() {
+                return (this.task === undefined) ? 'Создание задачи' : 'Просмотр задачи'; //this.$parent.$parent.tagSelect
+            },
+            zzz: function() {
+                return this.$parent.$parent.formProps.coords;
             }
         },
         template: `            
             <div class="modal-card" style="max-width: 500px">
                 <header class="modal-card-head">
-                    <p class="modal-card-title">Редактирование:</p>
+                    <p class="modal-card-title">{{ModalTitle}}</p>
                 </header>
                 <section class="modal-card-body">
-                    <b-field> 
+                    <b-field v-if="!task"> 
                         <b-input
                             type="name"
+                            v-model="value"
                             placeholder="Введите текст"
                             required>
                         </b-input>
@@ -151,10 +199,10 @@
                         style="height:350px"> 
                         <yandex-map
                         style="height:100%"
-                        :coords="coords" 
+                        :coords="zzz" 
                         @click="onClick">
                              <ymap-marker 
-                            :coords="coords" 
+                            :coords="zzz" 
                             marker-id="123" 
                             hint-content="some hint" 
                             />
@@ -163,7 +211,8 @@
                     </b-field>
                 </section>
                 <footer class="modal-card-foot">
-                    <button class="button" type="button" @click="$parent.close()">Close</button>
+                    <button v-if="!task" class="button" type="button" @click="onSend()">Send</button>
+                    <button class="button" type="button" @click="onClose()">Close</button>
                 </footer>
             </div>
         `
@@ -189,6 +238,10 @@
                 tagSelect: 'isAll',
                 lastWatchtagSelect: null,
                 isComponentModalActive: false,
+                formProps: {
+                    task: undefined,
+                    coords: [54.79402948133831, 56.05672011904906],
+                }
             }
         },
         methods: {
@@ -262,6 +315,13 @@
                 this.updateRecordsFromType()
                 this.updateRecordsFromTags()
                 this.updateRecordsFromDate()
+            },
+            viewMapMeet(task)
+            {
+                this.isComponentModalActive = true
+                this.formProps.task = task
+                this.formProps.coords = JSON.parse(task.coords)
+                console.log(task)
             },
             updateRecordsSync()
             {
@@ -339,6 +399,7 @@
                             if (this.dateEnd !== undefined && this.dateEnd != null)
                                 param.created_at = Date.parse(this.dateEnd)/1000
                                 
+                            param.tag = this.tagSelect
                             axios.post('/task/send', param)
                             .then(response => {
                                 if (response.data[0].id)

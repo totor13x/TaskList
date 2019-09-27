@@ -2030,19 +2030,56 @@ module.exports = {
 //
 //
 //
+//
+//
+//
+//
 var ModalForm = {
   data: function data() {
     return {
+      value: undefined,
       coords: [54.79402948133831, 56.05672011904906]
     };
   },
-  props: ['task'],
+  props: ['task' //'coords',
+  ],
   methods: {
     onClick: function onClick(e) {
+      console.log(this.$parent);
       this.coords = e.get('coords');
+      this.$parent.$parent.formProps.coords = this.coords;
+    },
+    onClose: function onClose() {
+      this.task = undefined;
+      this.coords = [54.79402948133831, 56.05672011904906]; //console.log(this.props.coords)
+
+      this.$parent.close();
+    },
+    onSend: function onSend() {
+      var self = this;
+      var param = {};
+      param.text = this.value;
+      if (self.$parent.$parent.dateEnd !== undefined && self.$parent.$parent.dateEnd != null) param.created_at = Date.parse(this.$parent.$parent.dateEnd) / 1000;
+      param.coords = JSON.stringify(this.coords);
+      param.tag = self.$parent.$parent.tagSelect;
+      axios.post('/task/send', param).then(function (response) {
+        if (response.data[0].id) {
+          self.$parent.$parent.updateTasks(response.data);
+          self.$parent.close();
+        }
+      });
+      this.task = undefined;
     }
   },
-  template: "            \n        <div class=\"modal-card\" style=\"max-width: 500px\">\n            <header class=\"modal-card-head\">\n                <p class=\"modal-card-title\">\u0420\u0435\u0434\u0430\u043A\u0442\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435:</p>\n            </header>\n            <section class=\"modal-card-body\">\n                <b-field> \n                    <b-input\n                        type=\"name\"\n                        placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\"\n                        required>\n                    </b-input>\n                </b-field>\n                <b-field\n                    style=\"height:350px\"> \n                    <yandex-map\n                    style=\"height:100%\"\n                    :coords=\"coords\" \n                    @click=\"onClick\">\n                         <ymap-marker \n                        :coords=\"coords\" \n                        marker-id=\"123\" \n                        hint-content=\"some hint\" \n                        />\n                        \n                    </yandex-map>\n                </b-field>\n            </section>\n            <footer class=\"modal-card-foot\">\n                <button class=\"button\" type=\"button\" @click=\"$parent.close()\">Close</button>\n            </footer>\n        </div>\n    "
+  computed: {
+    ModalTitle: function ModalTitle() {
+      return this.task === undefined ? 'Создание задачи' : 'Просмотр задачи'; //this.$parent.$parent.tagSelect
+    },
+    zzz: function zzz() {
+      return this.$parent.$parent.formProps.coords;
+    }
+  },
+  template: "            \n        <div class=\"modal-card\" style=\"max-width: 500px\">\n            <header class=\"modal-card-head\">\n                <p class=\"modal-card-title\">{{ModalTitle}}</p>\n            </header>\n            <section class=\"modal-card-body\">\n                <b-field v-if=\"!task\"> \n                    <b-input\n                        type=\"name\"\n                        v-model=\"value\"\n                        placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\"\n                        required>\n                    </b-input>\n                </b-field>\n                <b-field\n                    style=\"height:350px\"> \n                    <yandex-map\n                    style=\"height:100%\"\n                    :coords=\"zzz\" \n                    @click=\"onClick\">\n                         <ymap-marker \n                        :coords=\"zzz\" \n                        marker-id=\"123\" \n                        hint-content=\"some hint\" \n                        />\n                        \n                    </yandex-map>\n                </b-field>\n            </section>\n            <footer class=\"modal-card-foot\">\n                <button v-if=\"!task\" class=\"button\" type=\"button\" @click=\"onSend()\">Send</button>\n                <button class=\"button\" type=\"button\" @click=\"onClose()\">Close</button>\n            </footer>\n        </div>\n    "
 };
 module.exports = {
   components: {
@@ -2064,7 +2101,11 @@ module.exports = {
       },
       tagSelect: 'isAll',
       lastWatchtagSelect: null,
-      isComponentModalActive: false
+      isComponentModalActive: false,
+      formProps: {
+        task: undefined,
+        coords: [54.79402948133831, 56.05672011904906]
+      }
     };
   },
   methods: {
@@ -2138,6 +2179,12 @@ module.exports = {
       this.updateRecordsFromTags();
       this.updateRecordsFromDate();
     },
+    viewMapMeet: function viewMapMeet(task) {
+      this.isComponentModalActive = true;
+      this.formProps.task = task;
+      this.formProps.coords = JSON.parse(task.coords);
+      console.log(task);
+    },
     updateRecordsSync: function updateRecordsSync() {
       if (this.tasks != this.tasksOriginal) this.tasks = this.tasksOriginal;
     },
@@ -2196,6 +2243,7 @@ module.exports = {
             var param = {};
             param.text = value;
             if (_this3.dateEnd !== undefined && _this3.dateEnd != null) param.created_at = Date.parse(_this3.dateEnd) / 1000;
+            param.tag = _this3.tagSelect;
             axios.post('/task/send', param).then(function (response) {
               if (response.data[0].id) {
                 _this3.updateTasks(response.data);
@@ -33088,8 +33136,22 @@ var render = function() {
                       _vm._v(
                         "\n                          " +
                           _vm._s(task.text) +
-                          "\n                  "
-                      )
+                          "\n                          "
+                      ),
+                      task.tag == "meets"
+                        ? _c("b-button", {
+                            staticClass: "is-pulled-right is-small",
+                            attrs: {
+                              type: "is-primary",
+                              "icon-right": "eye-outline"
+                            },
+                            on: {
+                              click: function($event) {
+                                return _vm.viewMapMeet(task)
+                              }
+                            }
+                          })
+                        : _vm._e()
                     ],
                     1
                   )
@@ -33110,7 +33172,17 @@ var render = function() {
             }
           }
         },
-        [_c("modal-form")],
+        [
+          _c("modal-form", {
+            model: {
+              value: _vm.formProps,
+              callback: function($$v) {
+                _vm.formProps = $$v
+              },
+              expression: "formProps"
+            }
+          })
+        ],
         1
       )
     ],
@@ -48227,7 +48299,9 @@ var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   router: router,
   data: function data() {
     return {
-      token: undefined
+      token: undefined,
+      defaultCoords: [54.79402948133831, 56.05672011904906],
+      coords: [54.79402948133831, 56.05672011904906]
     };
   },
   watch: {

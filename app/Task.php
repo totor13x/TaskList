@@ -10,6 +10,7 @@ class Task extends Model
         'text',
         'status',
         'tag',
+        'coords',
         'created_at',
     ];
 

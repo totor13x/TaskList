@@ -41,6 +41,8 @@ const app = new Vue({
     data: function() {
         return {
             token: undefined,
+            defaultCoords: [54.79402948133831, 56.05672011904906],
+            coords: [54.79402948133831, 56.05672011904906],
         }
     }, 
     watch: {
