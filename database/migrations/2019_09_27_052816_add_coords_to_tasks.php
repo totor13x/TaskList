@@ -14,7 +14,7 @@ class AddCoordsToTasks extends Migration
     public function up()
     {
         Schema::table('tasks', function (Blueprint $table) {
-            $table->string('coords')->default(NULL);
+            $table->string('coords')->nullable();
         });
     }
 

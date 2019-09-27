@@ -2048,6 +2048,7 @@ var ModalForm = {
       console.log(this.$parent);
       this.coords = e.get('coords');
       this.$parent.$parent.formProps.coords = this.coords;
+      this.$forceUpdate();
     },
     onClose: function onClose() {
       this.task = undefined;

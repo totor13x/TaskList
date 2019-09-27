@@ -141,6 +141,7 @@
                 console.log(this.$parent)
                 this.coords = e.get('coords');
                 this.$parent.$parent.formProps.coords = this.coords
+                this.$forceUpdate();
             },
             onClose()
             {
