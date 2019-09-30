@@ -2038,20 +2038,26 @@ var ModalForm = {
   data: function data() {
     return {
       value: undefined,
-      coords: [54.79402948133831, 56.05672011904906]
+      coords: [54.79402948133831, 56.05672011904906],
+      reRenderCount: 0
     };
   },
-  props: ['task' //'coords',
+  props: [//'task',
+    //'coords',
   ],
   methods: {
     onClick: function onClick(e) {
-      console.log(this.$parent);
-      this.coords = e.get('coords');
-      this.$parent.$parent.formProps.coords = this.coords;
-      this.$forceUpdate();
+      if (this.task === undefined) {
+        this.coords = e.get('coords');
+        this.$parent.$parent.formProps.coords = this.coords;
+        this.forceReRender();
+      }
+    },
+    forceReRender: function forceReRender() {
+      this.reRenderCount += 1;
     },
     onClose: function onClose() {
-      this.task = undefined;
+      this.$parent.$parent.formProps.task = undefined;
       this.coords = [54.79402948133831, 56.05672011904906]; //console.log(this.props.coords)
 
       this.$parent.close();
@@ -2078,9 +2084,15 @@ var ModalForm = {
     },
     zzz: function zzz() {
       return this.$parent.$parent.formProps.coords;
+    },
+    task: function task() {
+      return this.$parent.$parent.formProps.task;
+    },
+    newid: function newid() {
+      return Date.now();
     }
   },
-  template: "            \n        <div class=\"modal-card\" style=\"max-width: 500px\">\n            <header class=\"modal-card-head\">\n                <p class=\"modal-card-title\">{{ModalTitle}}</p>\n            </header>\n            <section class=\"modal-card-body\">\n                <b-field v-if=\"!task\"> \n                    <b-input\n                        type=\"name\"\n                        v-model=\"value\"\n                        placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\"\n                        required>\n                    </b-input>\n                </b-field>\n                <b-field\n                    style=\"height:350px\"> \n                    <yandex-map\n                    style=\"height:100%\"\n                    :coords=\"zzz\" \n                    @click=\"onClick\">\n                         <ymap-marker \n                        :coords=\"zzz\" \n                        marker-id=\"123\" \n                        hint-content=\"some hint\" \n                        />\n                        \n                    </yandex-map>\n                </b-field>\n            </section>\n            <footer class=\"modal-card-foot\">\n                <button v-if=\"!task\" class=\"button\" type=\"button\" @click=\"onSend()\">Send</button>\n                <button class=\"button\" type=\"button\" @click=\"onClose()\">Close</button>\n            </footer>\n        </div>\n    "
+  template: "             \n        <div class=\"modal-card\" style=\"max-width: 500px\" @close=\"console.log('ththt')\">\n            <header class=\"modal-card-head\">\n                <p class=\"modal-card-title\">{{ModalTitle}}</p>\n            </header>\n            <section class=\"modal-card-body\">\n                <b-field v-if=\"!task\"> \n                    <b-input\n                        type=\"name\"\n                        v-model=\"value\"\n                        placeholder=\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u0442\u0435\u043A\u0441\u0442\"\n                        required>\n                    </b-input>\n                </b-field>\n                <b-field\n                    style=\"height:350px\"> \n                    <yandex-map\n                    style=\"height:100%\"\n                    :coords=\"zzz\" \n                    @click=\"onClick\">\n                         <ymap-marker \n                        :coords=\"zzz\" \n                        :marker-id=\"newid\" \n                        :key=\"reRenderCount\"\n                        />\n                        \n                    </yandex-map>\n                </b-field>\n            </section>\n            <footer class=\"modal-card-foot\">\n                <button v-if=\"!task\" class=\"button\" type=\"button\" @click=\"onSend()\">Send</button>\n                <button class=\"button\" type=\"button\" @click=\"onClose()\">Close</button>\n            </footer>\n        </div>\n    "
 };
 module.exports = {
   components: {
@@ -2254,6 +2266,7 @@ module.exports = {
         });
       } else {
         this.isComponentModalActive = true;
+        this.formProps.task = undefined;
       }
     }
   },

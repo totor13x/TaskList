@@ -129,23 +129,29 @@
             return {
                 value: undefined,
                 coords: [54.79402948133831, 56.05672011904906],
+                reRenderCount: 0,
             }
         },
         props: [
-            'task',
+            //'task',
             //'coords',
         ],
         methods: {
             onClick(e)
             {
-                console.log(this.$parent)
-                this.coords = e.get('coords');
-                this.$parent.$parent.formProps.coords = this.coords
-                this.$forceUpdate();
+                if (this.task === undefined) {
+                    this.coords = e.get('coords');
+                    this.$parent.$parent.formProps.coords = this.coords
+                    
+                    this.forceReRender()
+                }
+            },
+            forceReRender() {
+                this.reRenderCount += 1;  
             },
             onClose()
             {
-                this.task = undefined;
+                this.$parent.$parent.formProps.task = undefined;
                 this.coords = [54.79402948133831, 56.05672011904906];
                 //console.log(this.props.coords)
                 this.$parent.close()
@@ -180,10 +186,16 @@
             },
             zzz: function() {
                 return this.$parent.$parent.formProps.coords;
+            },
+            task: function() {
+                return this.$parent.$parent.formProps.task;
+            },
+            newid: function() {
+                return Date.now()
             }
         },
-        template: `            
-            <div class="modal-card" style="max-width: 500px">
+        template: `             
+            <div class="modal-card" style="max-width: 500px" @close="console.log('ththt')">
                 <header class="modal-card-head">
                     <p class="modal-card-title">{{ModalTitle}}</p>
                 </header>
@@ -204,8 +216,8 @@
                         @click="onClick">
                              <ymap-marker 
                             :coords="zzz" 
-                            marker-id="123" 
-                            hint-content="some hint" 
+                            :marker-id="newid" 
+                            :key="reRenderCount"
                             />
                             
                         </yandex-map>
@@ -413,7 +425,8 @@
                 }
                 else
                 {
-                    this.isComponentModalActive = true
+                  this.isComponentModalActive = true
+                  this.formProps.task = undefined
                 }
             },
             
